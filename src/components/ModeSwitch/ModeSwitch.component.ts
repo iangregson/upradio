@@ -26,7 +26,6 @@ export class ModeSwitchComponent extends Component {
   }
 
   get value(): UpRadioMode {
-    console.log('Trying to get mode...')
     if (this.broadcastInput.checked) {
       return UpRadioMode.BROADCAST;
     }

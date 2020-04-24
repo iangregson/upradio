@@ -83,7 +83,7 @@ export class App {
 
   public async connect(peerId: UpRadioPeerId): Promise<void> {
     this.peer.status = UpRadioPeerState.RELAY;
-    const connection: MediaConnection = this.peer.call(peerId, this.localStream.stream);
+    const connection: MediaConnection = this.peer.call(peerId, new MediaStream());
     connection.on('stream', (stream: MediaStream) => {
       this.remoteStream.start(stream);
     });
