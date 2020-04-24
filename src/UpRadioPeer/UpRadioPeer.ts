@@ -1,74 +1,148 @@
-import Peer, { DataConnection } from 'peerjs';
+import Peer, { DataConnection, MediaConnection } from 'peerjs';
 import { v4 as uuid } from 'uuid';
-import ConnectComponent from '../components/Connect/Connect.component';
 
-export interface IUpRadioPeer {
-  id: string;
-  peer: Peer;
-  connections: Map<string, DataConnection>;
-  init(): void;
-  connect(id: string): void;
-  broadcast(stream: MediaStream): void;
+
+
+export type UpRadioPeerId = string;
+
+export enum UpRadioPeerState {
+  OFF_AIR = 'OFF_AIR',
+  ON_AIR = 'ON_AIR',
+  RELAY = 'RELAY'
 }
 
-export class UpRadioPeer {
-  public id: string;
+export interface IUpRadioPeer {
+  id: UpRadioPeerId;
+  peer: Peer;
+  dataConnections: Map<UpRadioPeerId, DataConnection>;
+  mediaConnections: Map<UpRadioPeerId, MediaConnection>;
+  status: UpRadioPeerState;
+  init(): void;
+  connect(id: UpRadioPeerId): DataConnection;
+  reconnect(): void;
+  call(id: UpRadioPeerId, stream: MediaStream): MediaConnection;
+  on(event: string, callback: any): void;
+  off(event: string, callback: any): void;
+}
+
+export class UpRadioPeer implements IUpRadioPeer {
+  public id: UpRadioPeerId;
   public peer: Peer;
-  public connections: Map<string, DataConnection>;
+  public dataConnections: Map<string, DataConnection>;
+  public mediaConnections: Map<string, MediaConnection>;
+  public status: UpRadioPeerState;
 
   
   constructor() {
     this.id = uuid();
-    this.connections = new Map<string, DataConnection>();
-    this.peer = new Peer(this.id, { debug: 2 });
+    this.peer = new Peer(this.id, { debug: 3 });
+    this.dataConnections = new Map<string, DataConnection>();
+    this.mediaConnections = new Map<string, MediaConnection>();
+    this.status = UpRadioPeerState.OFF_AIR;
     return this;
   }
   
-  init(): void {
-    // When peerjs instance connects to peerjs server
-    this.peer.on('open', (id: string) => {
+  public init(): void {
+    UpRadioPeerService.init(this);
+  }
+  public connect(id: UpRadioPeerId): DataConnection {
+    const connection: DataConnection = this.peer.connect(id);
+    UpRadioPeerService.initDataConnection(this, connection);
+    return connection;
+  }
+  public reconnect(): void {
+    this.peer.reconnect();
+  }
+  public call(id: UpRadioPeerId, stream: MediaStream): MediaConnection {
+    const connection = this.peer.call(id, stream);
+    UpRadioPeerService.initMediaConnection(this, connection);
+    return connection;
+  }
+  public on(event: string, callback: () => void): void {
+    this.peer.on(event, callback);
+  }
+  public off(event: string, callback: () => void): void {
+    this.peer.off(event, callback);
+  }
+}
+
+export class UpRadioPeerService {
+  static init(peer: IUpRadioPeer) {
+    peer.on('open', (id: UpRadioPeerId) => {
       // Workaround for peer.reconnect deleting previous id
-      if (this.peer.id === null) {
-          console.log('Received null id from peer open');
-          this.peer.id = this.id;
+      if (peer.peer.id === null) {
+        peer.peer.id = peer.id;
       }
-      console.log('Connected to peerjs server');
+    });
+    
+    peer.on('connection', (connection: DataConnection) => {
+      UpRadioPeerService.initDataConnection(peer, connection);
     });
 
-    this.peer.on('connection', (connection: DataConnection) => {
-      console.log('Connected with ' + connection.peer);
-      connection.on('data', (data: any) => {
-        console.log('Data recieved', data);
-      });
-      connection.on('close', () => {
-        console.log('Connection with ' + connection.peer + 'was closed.');
-        this.connections.delete(connection.peer);
-      });
-      this.connections.set(connection.peer, connection);
-    });
-  
-    this.peer.on('disconnected', () => {
+    peer.on('disconnected', () => {
       console.log('Connection lost. Please reconnect');
       // Workaround for peer.reconnect deleting previous id
-      this.peer.reconnect();
+      peer.reconnect();
     });
-    this.peer.on('close', () => {
-      this.connections.clear()
+
+    peer.on('close', () => {
+      peer.dataConnections.clear()
+      peer.mediaConnections.clear()
       console.log('Connection destroyed. Please refresh');
     });
-    this.peer.on('error', (err: any) => {
-        console.error(err);
+
+    peer.on('error', (err: any) => {
+      console.error('UpradioPeerError: ', err);
     });
   }
-  connect(id: string): void {
-    const connection: DataConnection = this.peer.connect(id);
-    this.connections.set(connection.peer, connection);
+  static initMediaConnection(peer: UpRadioPeer, connection: MediaConnection): void {
+    console.log('MediaConnection with ' + connection.peer);
+    
+    connection.on('close', () => {
+      console.log('MediaConnection closed on peer id ' + connection.peer);
+      peer.mediaConnections.delete(connection.peer);
+    });
+    
+    connection.on('error', (err: any) => {
+      console.error('MediaConnectionError for peer id ' + connection.peer, err);
+    });
+    
+    peer.mediaConnections.set(connection.peer, connection);
   }
-  broadcast(stream: MediaStream): void {
-    const peerIds = Array.from(this.connections.keys());
-    for (let id of peerIds) {
-      console.log('Calling', id)
-      this.peer.call(id, stream);
+  static initDataConnection(peer: UpRadioPeer, connection: DataConnection): void {
+    console.log('DataConnection with ' + connection.peer);
+    
+    connection.on('close', () => {
+      console.log('DataConnection closed on peer id ' + connection.peer);
+      peer.dataConnections.delete(connection.peer);
+    });
+    
+    connection.on('error', (err: any) => {
+      console.error('DataConnectionError for peer id ' + connection.peer, err);
+    });
+  
+    peer.dataConnections.set(connection.peer, connection);
+  }
+  static closeAllConnections(peer: UpRadioPeer): void {
+    for (let entry of peer.dataConnections.entries()) {
+      let connection: DataConnection = entry[1];
+      connection.close();
+    }
+    for (let entry of peer.mediaConnections.entries()) {
+      let connection: MediaConnection = entry[1];
+      connection.close();
+    }
+  }
+  static closeMediaConnections(peer: UpRadioPeer): void {
+    for (let entry of peer.mediaConnections.entries()) {
+      let connection: MediaConnection = entry[1];
+      connection.close();
+    }
+  }
+  static closeDataConnections(peer: UpRadioPeer): void {
+    for (let entry of peer.dataConnections.entries()) {
+      let connection: DataConnection = entry[1];
+      connection.close();
     }
   }
 }

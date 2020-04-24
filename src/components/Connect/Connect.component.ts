@@ -3,12 +3,14 @@ import { Component } from '..';
 
 export default class ConnectComponent extends Component {
   public input: HTMLInputElement;
-  public button: HTMLButtonElement;
+  public connectBtn: HTMLButtonElement;
+  public disconnectBtn: HTMLButtonElement;
 
-  constructor(container: HTMLElement) {
-    super(container, template);
+  constructor(parent: HTMLElement) {
+    super(parent, 'Connect', template);
     
     this.input = this.container.querySelector('#ConnectInput');
-    this.button = this.container.querySelector('#ConnectButton');
+    this.connectBtn = this.container.querySelector('button#ConnectButton');
+    this.disconnectBtn = this.container.querySelector('button#DisconnectButton');
   }
 }
