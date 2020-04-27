@@ -16,10 +16,10 @@ export class App {
   public connectComponent: ConnectComponent;
   public broadcastComponent: BroadcastComponent;
 
-  constructor(root: HTMLElement) {
+  constructor(root: HTMLElement, options?: IUpRadioAppState) {
     this.root = root;
     this.root.innerHTML = template;
-    this.peer = new UpRadioPeer();
+    this.peer = new UpRadioPeer(options.peerId, options.peerStatus);
     this.peer.init();
     
 
@@ -27,7 +27,7 @@ export class App {
 
     this.modeSwitch = new ModeSwitchComponent(this.root);
     this.root.addEventListener('UpRadio:MODE_SWITCH', this.onModeChange.bind(this));
-    this.mode = UpRadioMode.LISTEN;
+    this.mode = options.mode || UpRadioMode.LISTEN;
 
     
     this.connectComponent = new ConnectComponent(this.root);
@@ -52,8 +52,13 @@ export class App {
       this.stopBroadcast();
     };
 
-    this.localStream.hide();
-    this.broadcastComponent.hide();
+    if (this.mode === UpRadioMode.LISTEN) {
+      this.localStream.hide();
+      this.broadcastComponent.hide();
+    } else {
+      this.connectComponent.hide();
+      this.remoteStream.hide();
+    }
 
     console.log(this);
   }
@@ -83,7 +88,7 @@ export class App {
 
   public async connect(peerId: UpRadioPeerId): Promise<void> {
     this.peer.status = UpRadioPeerState.RELAY;
-    const connection: MediaConnection = this.peer.call(peerId, new MediaStream());
+    const connection: MediaConnection = this.peer.call(peerId, this.localStream.stream);
     connection.on('stream', (stream: MediaStream) => {
       this.remoteStream.start(stream);
     });
@@ -134,39 +139,75 @@ interface IUpRadioAppState {
 }
 
 export class UpRadioAppState implements IUpRadioAppState {
-  private w: UpRadioAppWindow;
+  private w: Window | UpRadioAppWindow;
+  private interval: NodeJS.Timeout;
+  private _: IUpRadioAppState;
   public namespace = 'UpRadioAppState';
 
-  constructor(w: Window, app: App) {
-    this.w = Object.assign(w, { app });
-    this.w.app = app;
+  constructor(w: Window = window) {
+    this.w = w;
+    this._ = this.reload();
+  }
+  
+  public init(app: App): this {
+    Object.assign(this.w, { app });
 
-    this.reload();
-
-    const interval = setInterval(() => {
+    // Save app state every 3 seconds
+    this.udpate();
+    this.interval = setInterval(() => {
       this.udpate();
-    }, 3000);
+    }, 3 * 1000);
+
+    return this;
   }
 
   public get peerId(): UpRadioPeerId {
-    return this.w.app.peer.id;
+    let id: UpRadioPeerId;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      id = w.app.peer.id;
+    } catch (_) { }
+
+    return id || this._.peerId;
   }
   public set peerId(id: UpRadioPeerId) {
-    this.w.app.peer.id = id;
+    this._.peerId = id;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      w.app.peer.id = id;
+    } catch (_) { }
   }
   
   public get peerStatus(): UpRadioPeerState {
-    return this.w.app.peer.status;
+    let status: UpRadioPeerState;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      status = w.app.peer.status;
+    } catch (_) { }
+    return status || this._.peerStatus;
   }
   public set peerStatus(state: UpRadioPeerState) {
-    this.w.app.peer.status = state;
+    this._.peerStatus = state;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      w.app.peer.status = state;
+    } catch (_) { }
   }
   
   public get mode(): UpRadioMode {
-    return this.w.app.mode;
+    let m: UpRadioMode;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      m = w.app.mode;
+    } catch (_) { }
+    return m || this._.mode;
   }
   public set mode(mode: UpRadioMode) {
-    this.w.app.mode = mode;
+    this._.mode = mode;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      w.app.mode = mode;
+    } catch (_) { }
   }
 
   toJSON() {
@@ -179,12 +220,14 @@ export class UpRadioAppState implements IUpRadioAppState {
   udpate() {
     this.w.sessionStorage.setItem(this.namespace, JSON.stringify(this));
   }
-  reload() {
+  reload(): IUpRadioAppState {
+    let savedState: any;
     try {
-      const savedState = JSON.parse(this.w.sessionStorage.getItem(this.namespace));
-      this.peerId = savedState.peerId;
-      this.peerStatus = savedState.peerStatus;
-      this.mode = savedState.mode;
-    } catch (_) { }
+      savedState = JSON.parse(this.w.sessionStorage.getItem(this.namespace));
+    } catch (err) {
+      console.warn('Could not deserialize any existing app state.');
+    }
+    this._ = <IUpRadioAppState>savedState;
+    return this._;
   }
 }

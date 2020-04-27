@@ -33,12 +33,13 @@ export class UpRadioPeer implements IUpRadioPeer {
   public status: UpRadioPeerState;
 
   
-  constructor() {
-    this.id = uuid();
-    this.peer = new Peer(this.id, { debug: 3 });
+  constructor(id?: UpRadioPeerId, status?: UpRadioPeerState, debug: number = 3) {
+    this.id = id || uuid();
+    this.status = status || UpRadioPeerState.OFF_AIR;
+    
+    this.peer = new Peer(this.id, { debug });
     this.dataConnections = new Map<string, DataConnection>();
     this.mediaConnections = new Map<string, MediaConnection>();
-    this.status = UpRadioPeerState.OFF_AIR;
     return this;
   }
   
