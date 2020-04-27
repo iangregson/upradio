@@ -227,7 +227,7 @@ export class UpRadioAppState implements IUpRadioAppState {
     } catch (err) {
       console.warn('Could not deserialize any existing app state.');
     }
-    this._ = <IUpRadioAppState>savedState;
+    this._ = <IUpRadioAppState>savedState || { peerId: null, peerStatus: null, mode: null };
     return this._;
   }
 }

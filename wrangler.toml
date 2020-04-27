@@ -1,0 +1,10 @@
+name = "upradio"
+type = "webpack"
+account_id = "a2a9f84dfc0cbec204c41c4bf5ebd9dd"
+workers_dev = true
+route = ""
+zone_id = ""
+
+[site]
+bucket = "dist"
+entry-point = "workers-site"

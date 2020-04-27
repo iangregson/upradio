@@ -69,12 +69,15 @@ export class UpRadioStreamService {
       .then(ds => ds.filter(d => d.kind === 'audioinput'));
   }
   static async getAudioStream(audioDevice: MediaDeviceInfo, w: Window = window): Promise<MediaStream> {
-    const constraints = {
-      video: false,
-      audio: {
-        deviceId: { exact: audioDevice.deviceId }
-      }
-    };
-    return w.navigator.mediaDevices.getUserMedia(constraints);
+    const video = false;
+    let audio;
+
+    if (audioDevice && audioDevice.deviceId) {
+      audio = { deviceId: { exact: audioDevice.deviceId } }
+    } else {
+      audio = true;
+    }
+
+    return w.navigator.mediaDevices.getUserMedia({ video, audio });
   }
 }
