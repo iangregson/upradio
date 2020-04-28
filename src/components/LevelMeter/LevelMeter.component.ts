@@ -84,4 +84,17 @@ export class UpRadioAudioService {
     const audioContextProvider = window.AudioContext;
     return audioContextProvider;
   }
+  static createToneGeneratorAndStream(tone: number = 440 /* value for middle A */): [OscillatorNode, MediaStreamAudioDestinationNode] {
+    const audioCtx = new UpRadioAudioService.AudioContext();
+    audioCtx.resume();
+    
+    const oscillator = audioCtx.createOscillator();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(tone, audioCtx.currentTime);
+    
+    const outputStream = audioCtx.createMediaStreamDestination();
+    oscillator.connect(outputStream);
+    
+    return [oscillator, outputStream];
+  }
 }
