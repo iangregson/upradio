@@ -37,7 +37,13 @@ export class UpRadioPeer implements IUpRadioPeer {
     this.id = id || uuid();
     this.status = status || UpRadioPeerState.OFF_AIR;
     
-    this.peer = new Peer(this.id, { debug });
+    this.peer = new Peer(this.id, {
+      debug,
+      host: 'upradio.herokuapp.com',
+      port: 8090,
+      path: '/peer-server',
+      key: '6f833b93aaba'
+    });
     this.dataConnections = new Map<string, DataConnection>();
     this.mediaConnections = new Map<string, MediaConnection>();
     return this;
