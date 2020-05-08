@@ -40,7 +40,8 @@ export class UpRadioPeer implements IUpRadioPeer {
     this.peer = new Peer(this.id, {
       debug,
       host: 'upradio.herokuapp.com',
-      port: 8090,
+      port: 443,
+      secure: true,
       path: '/peer-server',
       key: '6f833b93aaba'
     });

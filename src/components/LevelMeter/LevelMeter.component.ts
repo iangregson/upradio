@@ -1,29 +1,29 @@
 import { Component } from "..";
 
-export interface ILevelMeterOptions {
+export interface IFreqMeterOptions {
   width: number,
   height: number,
   fftSize: number
 }
 
-const DEFAULT_METER_OPTIONS: ILevelMeterOptions = {
+const DEFAULT_METER_OPTIONS: IFreqMeterOptions = {
   width: 200,
   height: 200,
   fftSize: 256
 }
 
-export class LevelMeter extends Component {
+export class FreqMeter extends Component {
   public source: MediaStreamAudioSourceNode;
   public audioCtx: AudioContext;
   public analyser: AnalyserNode;
   public canvas: HTMLCanvasElement;
-  private options: ILevelMeterOptions;
+  private options: IFreqMeterOptions;
   private drawFrame: number;
   
-  constructor(parent: HTMLElement, options: ILevelMeterOptions = DEFAULT_METER_OPTIONS) {
-    super(parent, 'LevelMeter', '<canvas id="LevelMeterOutput"></canvas>');
+  constructor(parent: HTMLElement, options: IFreqMeterOptions = DEFAULT_METER_OPTIONS) {
+    super(parent, 'FreqMeter', '<canvas id="FreqMeterOutput"></canvas>');
     this.options = options;
-    this.canvas = this.parent.querySelector('canvas#LevelMeterOutput');
+    this.canvas = this.parent.querySelector('canvas#FreqMeterOutput');
     this.canvas.width = options.width;
     this.canvas.height = options.height;
     this.hide();
@@ -76,6 +76,59 @@ export class LevelMeter extends Component {
 
       x += barWidth + 1;
     }
+  }
+}
+
+export class LevelMeter extends Component {
+  public source: MediaStreamAudioSourceNode;
+  public audioCtx: AudioContext;
+  public analyser: ScriptProcessorNode;
+  public meter: HTMLMeterElement;
+  public value: number;
+  private drawFrame: number;
+
+  constructor(parent: HTMLElement) {
+    super(parent, 'LevelMeter', '<meter id="LevelMeterOutput"></meter>');
+    this.meter = this.parent.querySelector('meter#LevelMeterOutput');
+    this.meter.high = 0.25;
+    this.meter.max = 1;
+    this.meter.value = 0;
+    this.value = 0.0;
+    this.hide();
+  }
+
+  public init(stream: MediaStream): this {
+    this.audioCtx = new UpRadioAudioService.AudioContext();
+    this.source = this.audioCtx.createMediaStreamSource(stream);
+    this.analyser = this.audioCtx.createScriptProcessor(2048, 1, 1);
+    this.analyser.onaudioprocess = (event: AudioProcessingEvent) => {
+      const input = event.inputBuffer.getChannelData(0);
+      let i;
+      let sum = 0.0;
+      for (i = 0; i < input.length; ++i) {
+        sum += input[i] * input[i];
+      }
+      this.value = Math.sqrt(sum / input.length);
+    };
+    this.source.connect(this.analyser);
+    this.analyser.connect(this.audioCtx.destination);
+    this.audioCtx.resume();
+    this.draw();
+    this.show();
+    return this;
+  }
+
+  public stop(): this {
+    this.source = null;
+    cancelAnimationFrame(this.drawFrame);
+    this.drawFrame = null;
+    this.hide();
+    return this;
+  }
+
+  public draw() {
+    this.drawFrame = requestAnimationFrame(this.draw.bind(this));
+    this.meter.value = this.value;
   }
 }
 

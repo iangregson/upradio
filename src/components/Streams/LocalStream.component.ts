@@ -1,6 +1,6 @@
 import template from './LocalStream.component.html';
 import { Component } from "..";
-import { LevelMeter } from '../LevelMeter';
+import { LevelMeter, FreqMeter } from '../LevelMeter';
 
 export interface IUpRadioStream {
   stream: MediaStream;
@@ -12,6 +12,7 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
   private devices: MediaDeviceInfo[];
   private audioInputSelect: HTMLSelectElement;
   public levelMeter: LevelMeter;
+  public freqMeter: FreqMeter;
 
   public stream: MediaStream;
 
@@ -20,6 +21,7 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
 
     this.audioInputSelect = container.querySelector('select#audioSource');
     this.levelMeter = new LevelMeter(container);
+    this.freqMeter = new FreqMeter(container);
 
     this.initDeviceList();
   }
@@ -54,6 +56,7 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
       track.stop();
     });
     this.levelMeter.stop();
+    this.freqMeter.stop();
   }
 
   public async start(): Promise<void> {
@@ -62,6 +65,7 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
     const audioDevice = this.devices.find(d => d.deviceId === this.audioInputSelect.value);
     this.stream = await UpRadioStreamService.getAudioStream(audioDevice);
     this.levelMeter.init(this.stream);
+    this.freqMeter.init(this.stream);
     
     // In-case of proper labels becoming available
     this.initDeviceList();
