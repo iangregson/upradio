@@ -43,7 +43,7 @@ export class UpRadioPeer implements IUpRadioPeer {
       port: 443,
       secure: true,
       path: '/peer-server',
-      key: '6f833b93aaba'
+      key: process.env.PEER_KEY
     });
     this.dataConnections = new Map<string, DataConnection>();
     this.mediaConnections = new Map<string, MediaConnection>();
