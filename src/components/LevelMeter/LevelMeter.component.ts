@@ -134,7 +134,7 @@ export class LevelMeter extends Component {
 
 export class UpRadioAudioService {
   static get AudioContext() {
-    const audioContextProvider = window.AudioContext;
+    const audioContextProvider = window.AudioContext || window.webkitAudioContext;
     return audioContextProvider;
   }
   static createToneGeneratorAndStream(tone: number = 440 /* value for middle A */): [OscillatorNode, MediaStreamAudioDestinationNode] {

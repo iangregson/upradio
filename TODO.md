@@ -7,7 +7,7 @@ TODO
 - [X] Add a frequency bar visualizer
 - [X] Add a noise stream for connecting in relay mode (so we don't have to send voice just to listen)
 - [X] Connect to own PeerJS server
-- [ ] Add a level meter
+- [X] Add a level meter
 - [ ] Make it work on mobile
 - [ ] Tailwind CSS styling, colors, fonts, etc
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
