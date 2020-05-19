@@ -4,5 +4,6 @@ declare module '*.html' {
 }
 
 interface Window {
-  webkitAudioContext: typeof AudioContext
+  webkitAudioContext: typeof AudioContext;
+  logger: any;
 }

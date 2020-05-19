@@ -1,4 +1,5 @@
-const { App, UpRadioAppState } = require('./app.ts');
+const { App } = require('./app.ts');
+const { UpRadioAppState } = require('./UpRadioState.ts');
 
 async function main() {
     const root = document.getElementById('root');

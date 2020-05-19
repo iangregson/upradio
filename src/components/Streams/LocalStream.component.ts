@@ -59,11 +59,19 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
     this.freqMeter.stop();
   }
 
+  public get selectedDevice(): MediaDeviceInfo | undefined {
+    if (!this.devices) return;
+    return this.devices.find(d => d.deviceId === this.audioInputSelect.value);
+  }
+
+  public setSelectedDeviceId(id: string): void {
+    this.audioInputSelect.value = id;
+  }
+
   public async start(): Promise<void> {
     if (this.stream) this.stop();
 
-    const audioDevice = this.devices.find(d => d.deviceId === this.audioInputSelect.value);
-    this.stream = await UpRadioStreamService.getAudioStream(audioDevice);
+    this.stream = await UpRadioStreamService.getAudioStream(this.selectedDevice);
     this.levelMeter.init(this.stream);
     this.freqMeter.init(this.stream);
     

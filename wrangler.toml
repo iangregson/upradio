@@ -4,6 +4,11 @@ account_id = "a2a9f84dfc0cbec204c41c4bf5ebd9dd"
 workers_dev = true
 route = ""
 zone_id = ""
+webpack_config = "./workers-site/webpack.config.js"
+
+kv-namespaces = [
+  { binding = "UPRADIO_KV", id = "9561b576dae94bed8ddbab316a64c618" }
+]
 
 [site]
 bucket = "dist"

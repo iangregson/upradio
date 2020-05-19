@@ -8,12 +8,17 @@ TODO
 - [X] Add a noise stream for connecting in relay mode (so we don't have to send voice just to listen)
 - [X] Connect to own PeerJS server
 - [X] Add a level meter
-- [X] Make it work on mobile
-- [ ] Add a connecting component
-- [ ] Add a log component
+- [X] Make it work on mobile (ios safari)
+- [X] Implement max connections and handoff
+- [X] Remember input device in session store
+- [ ] Add station name / description / image component
+- [ ] Put station name / description / image into local storage
+- [X] Add station name verification via CloudFlare KV 
+- [ ] Add a spinner component
 - [ ] Add an alert component
-- [ ] Add readable station names via CloudFlare KV 
-- [ ] Implement max connections and handoff
+- [X] Add a status component + event bus
+- [X] Add resolve station names via CloudFlare KV
+- [ ] Add resolve station names via CloudFlare KV from URL path
 - [ ] Add listener count widget
 - [ ] Tailwind CSS styling, colors, fonts, etc
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc

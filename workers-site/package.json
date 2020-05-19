@@ -7,6 +7,16 @@
   "author": "Ashley Lewis <ashleymichal@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@cloudflare/kv-asset-handler": "^0.0.5"
+    "@cloudflare/kv-asset-handler": "0.0.5",
+    "crypto-js": "^4.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^1.0.9",
+    "@types/crypto-js": "^3.1.45",
+    "ts-loader": "^7.0.4",
+    "types-cloudflare-worker": "^1.2.0",
+    "typescript": "^3.9.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   }
 }
