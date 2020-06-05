@@ -96,6 +96,10 @@ export class UpRadioApi {
       
       if (retries > MAX_RETRIES) break;
     }
+
+    if (!this.token) {
+      throw new UpRadioApiError(401, 'Could not start a session. Please check your connection.');
+    }
   }
   public async login(peerId: UpRadioPeerId): Promise<UpRadioApiSessionToken> {
     this.token = await UpRadioApiService.login(peerId);

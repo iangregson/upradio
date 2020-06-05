@@ -1,15 +1,18 @@
+import { EventEmitter } from 'events';
+
 export interface IComponent {
   container: HTMLElement;
   hide(): void;
   show(): void;
 }
 
-export class Component implements IComponent {
+export class Component extends EventEmitter implements IComponent {
   public parent: HTMLElement;
   public container: HTMLElement;
   public id: string;
 
   constructor(parent: HTMLElement, id: string, template: string) {
+    super();
     this.parent = parent;
     this.id = id;
     this.container = document.createElement('div');

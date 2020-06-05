@@ -1,6 +1,7 @@
 import Peer, { DataConnection, MediaConnection } from 'peerjs';
 import { v4 as uuid } from 'uuid';
 import EventEmitter from 'events';
+import { UpRadioPeerRpcMsg, UpRadioPeerRpcService } from './UpRadioPeerRpc';
 
 export const MAX_CONNECTIONS: number = Number(process.env.MAX_CONNECTIONS) || 1;
 
@@ -139,12 +140,10 @@ export class UpRadioPeerService {
     });
 
     connection.on('data', (data: string) => {
-      const msg = UpRadioPeerService.parseDataConnectionMessage(data);
+      const msg = UpRadioPeerRpcService.parseMessage(data);
       if (!msg) return;
 
-      if (msg.type === UpRadioPeerRPCMessageType.nextPeer && msg.payload) {
-        peer.events.emit('nextPeer', msg.payload.peerId);
-      }
+      UpRadioPeerRpcService.handleMessage(peer, msg);
     });
   
     peer.dataConnections.set(connection.peer, connection);
@@ -171,45 +170,21 @@ export class UpRadioPeerService {
       connection.close();
     }
   }
-  static parseDataConnectionMessage(data: string): UpRadioPeerRPCMessage | null {
-    if (!data || !data.length) return null;
-    try {
-      const parsed: UpRadioPeerRPCMessage = JSON.parse(data);
-      return parsed;
-    } catch (_) {
-      return null;
-    }
-  }
   static handoffConnection(peer: UpRadioPeer, call: MediaConnection): void {
     const nextPeer = Array.from(peer.mediaConnections.values()).pop();
     if (!nextPeer) {
       throw new Error('Unable to handoff connection: no nextPeer available');
-      
     }
     const connection: DataConnection = peer.connect(call.peer);
     connection.on('open', () => {
-      const nextPeerMessage: UpRadioPeerRPCMessage = {
-        type: UpRadioPeerRPCMessageType.nextPeer,
-        payload: { peerId: nextPeer.peer }
-      };
-      connection.send(JSON.stringify(nextPeerMessage))
+      UpRadioPeerRpcService.nextPeer(peer, connection, nextPeer.peer);
+      
       connection.on('data', (data: string) => {
-        const msg = UpRadioPeerService.parseDataConnectionMessage(data);
+        const msg = UpRadioPeerRpcService.parseMessage(data);
         if (!msg) return;
-        if (msg.type === UpRadioPeerRPCMessageType.ack) {
-          connection.close();
-        }
+        
+        if (UpRadioPeerRpcMsg.isAck(msg)) connection.close();
       });
     });
   }
-}
-
-export enum UpRadioPeerRPCMessageType {
-  ack = 'ack',
-  nextPeer = 'nextPeer'
-}
-
-export interface UpRadioPeerRPCMessage {
-  type: UpRadioPeerRPCMessageType,
-  payload?: { peerId: UpRadioPeerId }
 }

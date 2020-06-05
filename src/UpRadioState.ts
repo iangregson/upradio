@@ -14,6 +14,7 @@ export interface IUpRadioAppState {
   mode: UpRadioMode;
   audioDeviceId: string;
   channelName: UpRadioChannelName;
+  targetChannelName: UpRadioChannelName;
   channelDescription: string;
   sessionToken: UpRadioApiSessionToken;
 }
@@ -92,6 +93,23 @@ export class UpRadioAppState implements IUpRadioAppState {
     } catch (_) { }
   }
 
+  public get targetChannelName(): UpRadioChannelName {
+    let name: UpRadioChannelName;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      name = w.app.connectComponent.input.value;
+    } catch (_) { }
+
+    return name || this._.targetChannelName;
+  }
+  public set targetChannelName(name: UpRadioChannelName) {
+    this._.targetChannelName = name;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      w.app.connectComponent.input.value = name;
+    } catch (_) { }
+  }
+
   public get channelDescription(): string {
     let description: string;
     try {
@@ -164,6 +182,7 @@ export class UpRadioAppState implements IUpRadioAppState {
       mode: this.mode,
       audioDeviceId: this.audioDeviceId,
       channelName: this.channelName,
+      targetChannelName: this.targetChannelName,
       channelDescription: this.channelDescription,
       sessionToken: this.sessionToken
     };
@@ -171,7 +190,6 @@ export class UpRadioAppState implements IUpRadioAppState {
   udpate() {
     const w = <UpRadioAppWindow>this.w;
     w.sessionStorage.setItem(this.namespace, JSON.stringify(this));
-    w.app.statusComponent.displayState(w.app);
   }
   reload(): IUpRadioAppState {
     let savedState: any;
@@ -186,6 +204,7 @@ export class UpRadioAppState implements IUpRadioAppState {
       mode: null,
       audioDeviceId: null,
       channelName: null,
+      targetChannelName: null,
       channelDescription: null,
       sessionToken: null
     };

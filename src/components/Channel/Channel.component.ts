@@ -22,8 +22,10 @@ export class ChannelComponent extends Component {
     super(parent, 'ChannelComponent', template);
     this.parent = parent;
     this.api = api;
+    
     this.nameInput = this.parent.querySelector('input#channelName');
     this.descriptionInput = this.parent.querySelector('input#channelDescription');
+    
     this.verifyBtn = this.parent.querySelector('button#channelVerify');
     this.verifyBtn.onclick = this.verifyChannelName.bind(this);
   }
@@ -35,7 +37,7 @@ export class ChannelComponent extends Component {
       })
       .catch((err: UpRadioApiError) => {
         this.channelStatus = UpRadioChannelStatus.invalid;
-      }); 
+      });
   }
 
   get channelStatus(): UpRadioChannelStatus {
@@ -45,16 +47,17 @@ export class ChannelComponent extends Component {
     this._status = status;
     // do things to alter the look and feel of the input here
     // show error etc
-    switch (status) {
-      case UpRadioChannelStatus.invalid:
-        this.parent.classList.remove('channelName__valid');
-        this.parent.classList.add('channelName__invalid');
-        break;
-      case UpRadioChannelStatus.valid:
-        this.parent.classList.remove('channelName__invalid');
-        this.parent.classList.add('channelName__valid');
-        break;
-    }
+    // switch (status) {
+    //   case UpRadioChannelStatus.invalid:
+    //     this.parent.classList.remove('channelName__valid');
+    //     this.parent.classList.add('channelName__invalid');
+    //     break;
+    //   case UpRadioChannelStatus.valid:
+    //     this.parent.classList.remove('channelName__invalid');
+    //     this.parent.classList.add('channelName__valid');
+    //     break;
+    // }
+    this.emit('ChannelComponent::changed::status');
   }
 
   get name(): UpRadioChannelName {

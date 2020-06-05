@@ -12,9 +12,24 @@
 </head>
 
 <body>
+  <header>
+    <h1>Universal Public Radio</h1>
+    <h3>P2P audio broadcasting</h3>
+  </header>
+
   <main id="root"></main>
-  <footer></footer>
+  
+  <footer class="text-center p-2">
+    <p id="copyright">&#169;</p>
+    <a href="https://github.com/iangregson/upradio">source</a>
+  </footer>
+  
   <script src="src/main.js"></script>
+
+  <script>
+    const year = new Date().getUTCFullYear();
+    document.querySelector('footer > p#copyright').innerText += ` Upradio ${year}`;
+  </script>
 </body>
 
 </html>

@@ -9,20 +9,25 @@ export enum UpRadioMode {
 export class ModeSwitchComponent extends Component {
   public broadcastInput: HTMLInputElement;
   public listenInput: HTMLInputElement;
+  public broadcastBtn: HTMLButtonElement;
+  public listenBtn: HTMLButtonElement;
   constructor(container: HTMLElement) {
     super(container, 'ModeSwtich', template);
     
     this.broadcastInput = container.querySelector('input#UpRadioModeSwitch-Broadcast');
     this.broadcastInput.onchange = () => {
-      const updateEvent = ModeSwitchComponent.createUpdateEvent(this.value);
-      this.container.dispatchEvent(updateEvent);
+      this.emit('MODE_SWITCH', { mode: this.value });
     }
     
     this.listenInput = container.querySelector('input#UpRadioModeSwitch-Listen');
     this.listenInput.onchange = () => {
-      const updateEvent = ModeSwitchComponent.createUpdateEvent(this.value);
-      this.container.dispatchEvent(updateEvent);
+      this.emit('MODE_SWITCH', { mode: this.value });
     }
+
+    this.broadcastBtn = container.querySelector('button#UpRadioModeSwitchBtn-Broadcast');
+    this.broadcastBtn.onclick = () => (this.value = UpRadioMode.BROADCAST);
+    this.listenBtn = container.querySelector('button#UpRadioModeSwitchBtn-Listen');
+    this.listenBtn.onclick = () => (this.value = UpRadioMode.LISTEN);
   }
 
   get value(): UpRadioMode {
@@ -34,6 +39,9 @@ export class ModeSwitchComponent extends Component {
   set value(mode: UpRadioMode) {
     this.broadcastInput.checked = mode === UpRadioMode.BROADCAST;
     this.listenInput.checked = mode === UpRadioMode.LISTEN;
+    this.broadcastBtn.style.display = mode === UpRadioMode.LISTEN ? 'unset' : 'none';
+    this.listenBtn.style.display = mode === UpRadioMode.BROADCAST ? 'unset' : 'none';
+    this.emit('MODE_SWITCH', { mode });
   }
 
   static createUpdateEvent(mode: UpRadioMode) {
