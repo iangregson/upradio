@@ -18,18 +18,26 @@ export class RemoteStreamComponent extends Component implements IUpRadioStream {
     this.audioOutput = container.querySelector('audio#UpRadioAudioOutput');
     this.playBtn = container.querySelector('button#UpRadioAudioOutput-play');
     this.playBtn.onclick = () => this.audioOutput.play();
-    this.playBtn.style.visibility = 'hidden';
     this.stopBtn = container.querySelector('button#UpRadioAudioOutput-stop');
-    this.stopBtn.style.visibility = 'hidden';
     this.stopBtn.onclick = () => this.audioOutput.pause();
+    this.hideBtn(this.stopBtn);
+
     this.audioOutput.onplay = () => {
-      this.stopBtn.style.visibility = 'visible';
-      this.playBtn.style.visibility = 'hidden';
+      this.hideBtn(this.playBtn);
+      this.showBtn(this.stopBtn);
     };
     this.audioOutput.onpause = () => {
-      this.stopBtn.style.visibility = 'visible';
-      this.playBtn.style.visibility = 'hidden';
+      this.hideBtn(this.stopBtn);
+      this.showBtn(this.playBtn);
     }
+  }
+
+  private hideBtn(btn: HTMLButtonElement) {
+    btn.classList.add('hidden');
+  }
+  
+  private showBtn(btn: HTMLButtonElement) {
+    btn.classList.remove('hidden');
   }
 
   public async start(stream: MediaStream): Promise<void> {

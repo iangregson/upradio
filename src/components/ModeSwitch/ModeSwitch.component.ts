@@ -10,7 +10,7 @@ export class ModeSwitchComponent extends Component {
   public broadcastInput: HTMLInputElement;
   public listenInput: HTMLInputElement;
   public broadcastBtn: HTMLButtonElement;
-  public listenBtn: HTMLButtonElement;
+
   constructor(container: HTMLElement) {
     super(container, 'ModeSwtich', template);
     
@@ -25,9 +25,7 @@ export class ModeSwitchComponent extends Component {
     }
 
     this.broadcastBtn = container.querySelector('button#UpRadioModeSwitchBtn-Broadcast');
-    this.broadcastBtn.onclick = () => (this.value = UpRadioMode.BROADCAST);
-    this.listenBtn = container.querySelector('button#UpRadioModeSwitchBtn-Listen');
-    this.listenBtn.onclick = () => (this.value = UpRadioMode.LISTEN);
+    this.broadcastBtn.onclick = () => (location.href = location.origin);
   }
 
   get value(): UpRadioMode {
@@ -40,7 +38,6 @@ export class ModeSwitchComponent extends Component {
     this.broadcastInput.checked = mode === UpRadioMode.BROADCAST;
     this.listenInput.checked = mode === UpRadioMode.LISTEN;
     this.broadcastBtn.style.display = mode === UpRadioMode.LISTEN ? 'unset' : 'none';
-    this.listenBtn.style.display = mode === UpRadioMode.BROADCAST ? 'unset' : 'none';
     this.emit('MODE_SWITCH', { mode });
   }
 

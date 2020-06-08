@@ -10,6 +10,42 @@ body {
   @apply bg-black;
 }
 
+nav, div#helpText {
+  @apply bg-white;
+  @apply p-6;
+  @apply text-gray-800;
+}
+
+input {
+  @apply bg-gray-200;
+  @apply appearance-none;
+  @apply border-2;
+  @apply border-gray-200;
+  @apply rounded;
+  @apply py-2;
+  @apply px-4;
+  @apply text-gray-700;
+  @apply leading-tight;
+}
+
+button.btn {
+  @apply text-center;
+  @apply mx-2;
+  @apply px-2;
+}
+
+input:focus {
+  @apply outline-none;
+  @apply bg-white;
+  @apply border-gray-800;
+}
+
+label {
+  @apply block;
+  @apply text-gray-500;
+  @apply font-bold;
+}
+
 main.centered-view {
   @apply flex;
   @apply flex-col;
@@ -28,4 +64,27 @@ svg.link-icon {
   @apply inline;
   @apply fill-current;
   @apply text-white;
+}
+
+.audio-controls-icon {
+  @apply h-16;
+  @apply w-16;
+  @apply inline;
+  @apply fill-current;
+  @apply text-white;
+}
+
+.main-mode-icon {
+  @apply h-48;
+  @apply m-auto;
+  @apply opacity-75;
+  @apply fill-current;
+  @apply text-white;
+}
+
+.status-icon {
+  @apply inline;
+  @apply align-text-bottom;
+  @apply h-4;
+  @apply fill-current;
 }
