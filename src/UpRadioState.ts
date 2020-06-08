@@ -42,6 +42,13 @@ export class UpRadioAppState implements IUpRadioAppState {
     return this;
   }
 
+  public setTitle() {
+    const channel = this.mode === UpRadioMode.BROADCAST
+      ? this.channelName
+      : this.targetChannelName;
+    document.title = channel ? (channel + ' | UpRadio') : 'UpRadio';
+  }
+
   public get peerId(): UpRadioPeerId {
     let id: UpRadioPeerId;
     try {
@@ -190,6 +197,7 @@ export class UpRadioAppState implements IUpRadioAppState {
   udpate() {
     const w = <UpRadioAppWindow>this.w;
     w.sessionStorage.setItem(this.namespace, JSON.stringify(this));
+    this.setTitle();
   }
   reload(): IUpRadioAppState {
     let savedState: any;

@@ -17,13 +17,16 @@ TODO
 - [X] Add a status component + event bus
 - [X] Add resolve station names via CloudFlare KV
 - [X] Add resolve station names via CloudFlare KV from URL path
-- [ ] Machine generated avatar
+- [X] Machine generated avatar
+- [ ] Top right menu icon
+- [ ] Top right menu: connect to different channel / start broadcast
 - [ ] Sanitize inputs
+- [ ] Service worker / Lighthouse tests
+- [ ] Basic Accessibility tests
 - [ ] Copy URL component
 - [ ] Tailwind CSS styling, colors, fonts, etc
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
-- [ ] Add a spinner component
-- [ ] Add an alert component
+- [ ] Add status icon to status component
 - [ ] Add listener count widget
 
 ### Phase 2

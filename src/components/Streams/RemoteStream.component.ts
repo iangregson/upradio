@@ -5,6 +5,8 @@ import { UpRadioAudioService } from '../LevelMeter';
 
 export class RemoteStreamComponent extends Component implements IUpRadioStream {
   private audioOutput: HTMLAudioElement;
+  private playBtn: HTMLButtonElement;
+  private stopBtn: HTMLButtonElement;
 
   public stream: MediaStream;
   private dialToneGenerator: OscillatorNode;
@@ -14,6 +16,20 @@ export class RemoteStreamComponent extends Component implements IUpRadioStream {
     super(container, 'RemoteStream', template);
 
     this.audioOutput = container.querySelector('audio#UpRadioAudioOutput');
+    this.playBtn = container.querySelector('button#UpRadioAudioOutput-play');
+    this.playBtn.onclick = () => this.audioOutput.play();
+    this.playBtn.style.visibility = 'hidden';
+    this.stopBtn = container.querySelector('button#UpRadioAudioOutput-stop');
+    this.stopBtn.style.visibility = 'hidden';
+    this.stopBtn.onclick = () => this.audioOutput.pause();
+    this.audioOutput.onplay = () => {
+      this.stopBtn.style.visibility = 'visible';
+      this.playBtn.style.visibility = 'hidden';
+    };
+    this.audioOutput.onpause = () => {
+      this.stopBtn.style.visibility = 'visible';
+      this.playBtn.style.visibility = 'hidden';
+    }
   }
 
   public async start(stream: MediaStream): Promise<void> {

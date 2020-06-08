@@ -15,6 +15,6 @@ export class IdenticonComponent extends Component {
   draw(id: UpRadioPeerId) {
     const options = { size: AVATAR_SIZE, format: 'svg' };
     this.identicon = new Ideniticon(id, options).toString();
-    this.identiconContainer.innerHTML = `<img width=${AVATAR_SIZE} height=${AVATAR_SIZE} src="data:image/svg+xml;base64,${this.identicon}">`;
+    this.identiconContainer.innerHTML = `<img class="rounded" width=${AVATAR_SIZE} height=${AVATAR_SIZE} src="data:image/svg+xml;base64,${this.identicon}">`;
   }
 }
