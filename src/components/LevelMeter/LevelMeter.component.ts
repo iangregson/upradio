@@ -21,12 +21,9 @@ export class FreqMeter extends Component {
   private drawFrame: number;
   
   constructor(parent: HTMLElement, options: IFreqMeterOptions = DEFAULT_METER_OPTIONS) {
-    super(parent, 'FreqMeter', '<canvas id="FreqMeterOutput"></canvas>');
+    super(parent, 'FreqMeter', '<canvas id="FreqMeterOutput" class="w-full rounded h-20"></canvas>');
     this.options = options;
     this.canvas = this.parent.querySelector('canvas#FreqMeterOutput');
-    this.canvas.width = options.width;
-    this.canvas.height = options.height;
-    this.hide();
   }
 
   public init(stream: MediaStream): this {
@@ -45,14 +42,17 @@ export class FreqMeter extends Component {
     this.source = null;
     cancelAnimationFrame(this.drawFrame);
     this.drawFrame = null;
-    this.hide();
+    const WIDTH = this.canvas.width;
+    const HEIGHT = this.canvas.height;
+    const canvasCtx = this.canvas.getContext('2d');
+    canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
     return this;
   }
 
   public draw() {
     this.drawFrame = requestAnimationFrame(this.draw.bind(this));
-    const WIDTH = this.options.width;
-    const HEIGHT = this.options.height;
+    const WIDTH = this.canvas.width;
+    const HEIGHT = this.canvas.height;
     
     const canvasCtx = this.canvas.getContext('2d');
     canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
@@ -61,9 +61,6 @@ export class FreqMeter extends Component {
     const dataArray = new Uint8Array(bufferLength);
     this.analyser.getByteFrequencyData(dataArray);
 
-    canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-    canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-    
     var barWidth = (WIDTH / bufferLength) * 2.5;
     var barHeight;
     var x = 0;
@@ -71,7 +68,8 @@ export class FreqMeter extends Component {
     for(var i = 0; i < bufferLength; i++) {
       barHeight = dataArray[i]/2;
 
-      canvasCtx.fillStyle = 'rgb(' + (barHeight+100) + ',50,50)';
+      // canvasCtx.fillStyle = 'rgb(' + (barHeight+100) + ',255,255)';
+      canvasCtx.fillStyle = 'rgb(255,255,255)';
       canvasCtx.fillRect(x,HEIGHT-barHeight/2,barWidth,barHeight);
 
       x += barWidth + 1;
@@ -88,13 +86,12 @@ export class LevelMeter extends Component {
   private drawFrame: number;
 
   constructor(parent: HTMLElement) {
-    super(parent, 'LevelMeter', '<meter id="LevelMeterOutput"></meter>');
+    super(parent, 'LevelMeter', '<meter id="LevelMeterOutput" high="0.25" max="1" value="0" class="w-full"></meter>');
     this.meter = this.parent.querySelector('meter#LevelMeterOutput');
     this.meter.high = 0.25;
     this.meter.max = 1;
     this.meter.value = 0;
     this.value = 0.0;
-    this.hide();
   }
 
   public init(stream: MediaStream): this {

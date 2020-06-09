@@ -35,6 +35,5 @@ export class Component extends EventEmitter implements IComponent {
 }
 
 export * from './Connect';
-export * from './Broadcast';
 export * from './ModeSwitch';
 export * from './Streams';

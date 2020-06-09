@@ -6,7 +6,6 @@ import { MediaConnection } from 'peerjs';
 import { LocalStreamComponent } from './components/Streams/LocalStream.component';
 import { RemoteStreamComponent } from './components/Streams/RemoteStream.component';
 import { ModeSwitchComponent, UpRadioMode } from './components/ModeSwitch/ModeSwitch.component';
-import BroadcastComponent from './components/Broadcast/Broadcast.component';
 import { EventEmitter } from 'events';
 import { UpRadioStatusBar } from './components/Status';
 import logger, { LogLevel } from 'peerjs/lib/logger';
@@ -38,7 +37,6 @@ export class App {
   public connectComponent: ConnectComponent;
   public channel: ChannelComponent;
   public targetChannel: TargetChannel;
-  public broadcastComponent: BroadcastComponent;
   public statusComponent: UpRadioStatusBar;
   public api: UpRadioApi;
   public heartbeat: NodeJS.Timeout;
@@ -167,14 +165,13 @@ export class AppService {
   static engageBroadcastMode(app: App): void {
     UpRadioPeerService.closeMediaConnections(app.peer);
     app.channel.show();
-    app.broadcastComponent.show();
     app.localStream.show();
+    app.targetChannel.hide();
     app.remoteStream.hide();
   }
   static engageListenMode(app: App): void {
     UpRadioPeerService.closeMediaConnections(app.peer);
     app.channel.hide();
-    app.broadcastComponent.hide();
     app.localStream.hide();
     app.remoteStream.show();
   }
@@ -189,10 +186,8 @@ export class AppService {
 
     app.remoteStream = new RemoteStreamComponent(app.streamSection);
     app.localStream = new LocalStreamComponent(app.streamSection);
-    
-    app.broadcastComponent = new BroadcastComponent(app.broadcastSection);
-    app.broadcastComponent.broadcastBtn.onclick = app.broadcast.bind(app);
-    app.broadcastComponent.stopBroadcastingBtn.onclick = app.stopBroadcast.bind(app);
+    app.localStream.broadcastBtn.onclick = app.broadcast.bind(app);
+    app.localStream.stopBroadcastingBtn.onclick = app.stopBroadcast.bind(app);
   }
   static initOptions(app: App, options: IUpRadioAppState) {
     app.connectComponent.input.value = options.targetChannelName || null;

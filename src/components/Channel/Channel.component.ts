@@ -3,6 +3,7 @@ import { Component } from "..";
 import { UpRadioApi } from '@upradio-client/UpRadioApi';
 import { UpRadioApiError } from '@upradio-server/api';
 
+export type UpRadioChannelId = string;
 export type UpRadioChannelName = string;
 export enum UpRadioChannelStatus {
   valid = 'VALID',
@@ -15,7 +16,7 @@ export class ChannelComponent extends Component {
 
   private _status: UpRadioChannelStatus;
   private nameInput: HTMLInputElement;
-  private descriptionInput: HTMLInputElement;
+  private descriptionInput: HTMLTextAreaElement;
   private verifyBtn: HTMLButtonElement;
 
   constructor(parent: HTMLElement, api: UpRadioApi) {
@@ -24,14 +25,14 @@ export class ChannelComponent extends Component {
     this.api = api;
     
     this.nameInput = this.parent.querySelector('input#channelName');
-    this.descriptionInput = this.parent.querySelector('input#channelDescription');
+    this.descriptionInput = this.parent.querySelector('textarea#channelDescription');
     
     this.verifyBtn = this.parent.querySelector('button#channelVerify');
     this.verifyBtn.onclick = this.verifyChannelName.bind(this);
   }
 
   public async verifyChannelName() {
-    this.api.channelVerify(this.name)
+    await this.api.channelVerify(this.name)
       .then(() => {
         this.channelStatus = UpRadioChannelStatus.valid;
       })
@@ -68,9 +69,10 @@ export class ChannelComponent extends Component {
   }
 
   get description(): string {
-    return this.descriptionInput.value;
+    return this.descriptionInput.textContent;
+    // return this.descriptionInput.value;
   }
   set description(description: string) {
-    this.descriptionInput.value = description;
+    this.descriptionInput.textContent = description;
   }
 }

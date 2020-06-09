@@ -1,3 +1,20 @@
-<div class="upradio-select">
-  <label for="audioSource">Audio input source: </label><select id="audioSource"></select>
+<hr class="my-2 border-b-4 rounded-full border-gray-500 opacity-75">
+
+<label for="audioSource">Audio input source</label>
+<select id="audioSource" class="upradio-select"></select>
+
+<div class="mt-4 flex flex-row items-center">
+  <div class="flex-1 text-center">
+    <button id="BroadcastButton" type="button">
+      <svg class="audio-controls-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM7 6l8 4-8 4V6z"/></svg>
+    </button>
+    <button id="StopBroadcastingButton" type="button" class="hidden">
+      <svg class="audio-controls-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM7 6h2v8H7V6zm4 0h2v8h-2V6z"/></svg>
+    </button>
+  </div>
+  <div id="broadcastStatusPanel" class="flex-1 text-center relative">
+    <div class="absolute top-0 w-full">
+      <span id="broadcastStatus" class="text-red-500 font-extrabold">OFF AIR</span>
+    </div>
+  </div>
 </div>

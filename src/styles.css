@@ -16,7 +16,7 @@ nav, div#helpText {
   @apply text-gray-800;
 }
 
-input {
+input, textarea {
   @apply bg-gray-200;
   @apply appearance-none;
   @apply border-2;
@@ -28,13 +28,17 @@ input {
   @apply leading-tight;
 }
 
+textarea {
+  resize: none;
+}
+
 button.btn {
   @apply text-center;
   @apply mx-2;
   @apply px-2;
 }
 
-input:focus {
+input:focus, textarea:focus {
   @apply outline-none;
   @apply bg-white;
   @apply border-gray-800;
@@ -87,4 +91,40 @@ svg.link-icon {
   @apply align-text-bottom;
   @apply h-4;
   @apply fill-current;
+}
+
+.upradio-select {
+  @apply block;
+  @apply appearance-none;
+  @apply w-full;
+  @apply bg-white;
+  @apply border;
+  @apply border-gray-400;
+  @apply text-gray-900;
+  @apply py-2;
+  @apply pr-8;
+  @apply rounded;
+  @apply shadow;
+  @apply leading-tight;
+}
+
+.upradio-select {
+  @apply border-gray-500;
+}
+
+.upradio-select {
+  @apply outline-none;
+  @apply shadow-outline;
+}
+
+.channel-image {
+  @apply flex-1;
+  @apply hidden;
+  @apply rounded-lg;
+  @apply w-full;
+  @apply max-h-full;
+  @apply bg-local;
+  @apply bg-center;
+  @apply bg-cover;
+  @apply bg-no-repeat;
 }

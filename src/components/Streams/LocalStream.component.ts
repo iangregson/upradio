@@ -11,18 +11,23 @@ export interface IUpRadioStream {
 export class LocalStreamComponent extends Component implements IUpRadioStream {
   private devices: MediaDeviceInfo[];
   private audioInputSelect: HTMLSelectElement;
-  public levelMeter: LevelMeter;
   public freqMeter: FreqMeter;
+  public broadcastBtn: HTMLButtonElement;
+  public stopBroadcastingBtn: HTMLButtonElement;
+  private statusPanel: HTMLDivElement;
+  private broadcastStatusText: HTMLSpanElement;
 
   public stream: MediaStream;
 
   constructor(container: HTMLElement) {
     super(container, 'LocalStream', template);
 
+    this.broadcastBtn = this.container.querySelector('button#BroadcastButton');
+    this.stopBroadcastingBtn = this.container.querySelector('button#StopBroadcastingButton');
+    this.broadcastStatusText = this.container.querySelector('span#broadcastStatus');
+    this.statusPanel = this.container.querySelector('div#broadcastStatusPanel');
+    this.freqMeter = new FreqMeter(this.statusPanel);
     this.audioInputSelect = container.querySelector('select#audioSource');
-    this.levelMeter = new LevelMeter(container);
-    this.freqMeter = new FreqMeter(container);
-
     this.initDeviceList();
   }
 
@@ -55,8 +60,12 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
     this.stream.getTracks().forEach(track => {
       track.stop();
     });
-    this.levelMeter.stop();
     this.freqMeter.stop();
+    this.stopBroadcastingBtn.classList.toggle('hidden');
+    this.broadcastBtn.classList.toggle('hidden');
+    this.broadcastStatusText.classList.toggle('text-red-500');
+    this.broadcastStatusText.classList.toggle('text-green-500');
+    this.broadcastStatusText.innerText = 'OFF AIR';
   }
 
   public get selectedDevice(): MediaDeviceInfo | undefined {
@@ -72,8 +81,12 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
     if (this.stream) this.stop();
 
     this.stream = await UpRadioStreamService.getAudioStream(this.selectedDevice);
-    this.levelMeter.init(this.stream);
     this.freqMeter.init(this.stream);
+    this.broadcastStatusText.classList.toggle('text-red-500');
+    this.broadcastStatusText.classList.toggle('text-green-500');
+    this.broadcastStatusText.innerText = 'ON AIR';
+    this.stopBroadcastingBtn.classList.toggle('hidden');
+    this.broadcastBtn.classList.toggle('hidden');
     
     // In-case of proper labels becoming available
     this.initDeviceList();
