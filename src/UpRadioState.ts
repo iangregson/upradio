@@ -17,6 +17,7 @@ export interface IUpRadioAppState {
   targetChannelName?: UpRadioChannelName;
   channelDescription?: string;
   sessionToken?: UpRadioApiSessionToken;
+  channelImage?: string;
 }
 
 export class UpRadioAppState implements IUpRadioAppState {
@@ -133,6 +134,23 @@ export class UpRadioAppState implements IUpRadioAppState {
       w.app.channelEdit.description = description;
     } catch (_) { }
   }
+
+  public get channelImage(): string {
+    let description: string;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      description = w.app.channelEdit.image;
+    } catch (_) { }
+
+    return description || this._.channelImage;
+  }
+  public set channelImage(imageBase64: string) {
+    this._.channelImage = imageBase64;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      w.app.channelEdit.image = imageBase64;
+    } catch (_) { }
+  }
   
   public get peerStatus(): UpRadioPeerState {
     let status: UpRadioPeerState;
@@ -191,6 +209,7 @@ export class UpRadioAppState implements IUpRadioAppState {
       channelName: this.channelName,
       targetChannelName: this.targetChannelName,
       channelDescription: this.channelDescription,
+      channelImage: this.channelImage,
       sessionToken: this.sessionToken
     };
   }
@@ -199,7 +218,8 @@ export class UpRadioAppState implements IUpRadioAppState {
     const props = this.toJSON();
     const localStore = {
       channelName: props.channelName,
-      channelDescription: props.channelDescription
+      channelDescription: props.channelDescription,
+      channelImage: props.channelImage
     };
     const sessionStore = {
       peerId: props.peerId,
@@ -236,6 +256,7 @@ export class UpRadioAppState implements IUpRadioAppState {
     this._.channelName = savedLocal.channelName || null;
     this._.targetChannelName = savedSession.targetChannelName || null;
     this._.channelDescription = savedLocal.channelDescription || null;
+    this._.channelImage = savedLocal.channelImage || null;
     this._.sessionToken = savedSession.sessionToken || null;
     return this._;
   }

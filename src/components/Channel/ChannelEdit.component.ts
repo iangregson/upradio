@@ -113,6 +113,7 @@ export class ChannelEditComponent extends Component {
     return this.channelInfo.image;
   }
   set image(imageBase64: string) {
+    if (!imageBase64) return;
     this.channelInfo.image = imageBase64;
   }
 }

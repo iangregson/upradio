@@ -200,6 +200,7 @@ export class AppService {
     app.connectComponent.input.value = options.targetChannelName || null;
     app.channelEdit.name = options.channelName || null;
     app.channelEdit.description = options.channelDescription || null;
+    app.channelEdit.image = options.channelImage || null;
     app.mode = options.mode || UpRadioMode.LISTEN;
     app.localStream.setSelectedDeviceId(options.audioDeviceId);
   }
