@@ -9,14 +9,14 @@ interface UpRadioAppWindow extends Window {
 }
 
 export interface IUpRadioAppState {
-  peerId: UpRadioPeerId;
-  peerStatus: UpRadioPeerState;
-  mode: UpRadioMode;
-  audioDeviceId: string;
-  channelName: UpRadioChannelName;
-  targetChannelName: UpRadioChannelName;
-  channelDescription: string;
-  sessionToken: UpRadioApiSessionToken;
+  peerId?: UpRadioPeerId;
+  peerStatus?: UpRadioPeerState;
+  mode?: UpRadioMode;
+  audioDeviceId?: string;
+  channelName?: UpRadioChannelName;
+  targetChannelName?: UpRadioChannelName;
+  channelDescription?: string;
+  sessionToken?: UpRadioApiSessionToken;
 }
 
 export class UpRadioAppState implements IUpRadioAppState {
@@ -87,7 +87,7 @@ export class UpRadioAppState implements IUpRadioAppState {
     let name: UpRadioChannelName;
     try {
       const w = <UpRadioAppWindow>this.w;
-      name = w.app.channel.name;
+      name = w.app.channelEdit.name;
     } catch (_) { }
 
     return name || this._.channelName;
@@ -96,7 +96,7 @@ export class UpRadioAppState implements IUpRadioAppState {
     this._.channelName = name;
     try {
       const w = <UpRadioAppWindow>this.w;
-      w.app.channel.name = name;
+      w.app.channelEdit.name = name;
     } catch (_) { }
   }
 
@@ -121,7 +121,7 @@ export class UpRadioAppState implements IUpRadioAppState {
     let description: string;
     try {
       const w = <UpRadioAppWindow>this.w;
-      description = w.app.channel.description;
+      description = w.app.channelEdit.description;
     } catch (_) { }
 
     return description || this._.channelDescription;
@@ -130,7 +130,7 @@ export class UpRadioAppState implements IUpRadioAppState {
     this._.channelDescription = description;
     try {
       const w = <UpRadioAppWindow>this.w;
-      w.app.channel.description = description;
+      w.app.channelEdit.description = description;
     } catch (_) { }
   }
   
@@ -196,26 +196,47 @@ export class UpRadioAppState implements IUpRadioAppState {
   }
   udpate() {
     const w = <UpRadioAppWindow>this.w;
-    w.sessionStorage.setItem(this.namespace, JSON.stringify(this));
+    const props = this.toJSON();
+    const localStore = {
+      channelName: props.channelName,
+      channelDescription: props.channelDescription
+    };
+    const sessionStore = {
+      peerId: props.peerId,
+      peerStatus: props.peerStatus,
+      mode: props.mode,
+      audioDeviceId: props.audioDeviceId,
+      targetChannelName: props.targetChannelName,
+      sessionToken: props.sessionToken
+    };
+    w.localStorage.setItem(this.namespace, JSON.stringify(localStore));
+    w.sessionStorage.setItem(this.namespace, JSON.stringify(sessionStore));
     this.setTitle();
   }
   reload(): IUpRadioAppState {
-    let savedState: any;
+    let savedSession: any;
+    let savedLocal: any;
     try {
-      savedState = JSON.parse(this.w.sessionStorage.getItem(this.namespace));
+      savedSession = JSON.parse(this.w.sessionStorage.getItem(this.namespace)) || {};
     } catch (err) {
-      this.w.logger.warn('Could not deserialize any existing app state.');
+      this.w.logger.warn('Could not deserialize any existing app state from sessionStorage.');
+      savedSession = {};
     }
-    this._ = <IUpRadioAppState>savedState || {
-      peerId: null,
-      peerStatus: null,
-      mode: null,
-      audioDeviceId: null,
-      channelName: null,
-      targetChannelName: null,
-      channelDescription: null,
-      sessionToken: null
-    };
+    try {
+      savedLocal = JSON.parse(this.w.localStorage.getItem(this.namespace)) || {};
+    } catch (err) {
+      this.w.logger.warn('Could not deserialize any existing app state from localStorage.');
+      savedLocal = {};
+    }
+    this._ = {};
+    this._.peerId = savedSession.peerId || null;
+    this._.peerStatus = savedSession.peerStatus || null;
+    this._.mode = savedSession.mode || null;
+    this._.audioDeviceId = savedSession.audioDeviceId || null;
+    this._.channelName = savedLocal.channelName || null;
+    this._.targetChannelName = savedSession.targetChannelName || null;
+    this._.channelDescription = savedLocal.channelDescription || null;
+    this._.sessionToken = savedSession.sessionToken || null;
     return this._;
   }
 }

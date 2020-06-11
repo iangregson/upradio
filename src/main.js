@@ -1,6 +1,8 @@
 const { App } = require('./app.ts');
 const { UpRadioAppState } = require('./UpRadioState.ts');
 
+main().catch(console.error);
+
 async function main() {
   const root = document.getElementById('root');
   const channelName = getChannelName();
@@ -39,4 +41,3 @@ function initHelp() {
   }
 }
 
-main().catch(console.error);

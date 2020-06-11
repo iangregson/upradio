@@ -53,18 +53,21 @@ export class App {
     this.peer = new UpRadioPeer(options.peerId, options.peerStatus, DEBUG_LEVEL);
     this.peer.init();
     
+    this.api = new UpRadioApi(this.peer.id)
+    
     AppService.initComponents(this);
     AppService.initOptions(this, options);
     AppService.switchMode(this, this.mode);
 
-    this.api = new UpRadioApi(this.peer.id)
     this.events.emit('status::message', { text: 'Creating session...', level: 'log' });
+    
     this.api.init(options.sessionToken)
       .then(() => this.events.emit('status::message', { text: 'Session started.', level: 'success' }))
       .catch((err: UpRadioApiError) => {
         this.events.emit('status::message', { text: err.message, level: 'error' });
-      })
-    this.heartbeat = setInterval(() => {
+      });
+    
+     this.heartbeat = setInterval(() => {
       this.api.heartbeat(this.channelEdit.name)
         .catch((err: UpRadioApiError) => {
           if (err.status === 409) {
@@ -164,6 +167,8 @@ export class App {
 export class AppService {
   static engageBroadcastMode(app: App): void {
     UpRadioPeerService.closeMediaConnections(app.peer);
+    app.listenSection.classList.add('hidden');
+    app.broadcastSection.classList.remove('hidden');
     app.channelEdit.show();
     app.localStream.show();
     app.channelInfo.hide();
@@ -171,12 +176,14 @@ export class AppService {
   }
   static engageListenMode(app: App): void {
     UpRadioPeerService.closeMediaConnections(app.peer);
+    app.listenSection.classList.remove('hidden');
+    app.broadcastSection.classList.add('hidden');
     app.channelEdit.hide();
     app.localStream.hide();
     app.remoteStream.show();
   }
   static initComponents(app: App): void {
-    app.channelEdit = new ChannelEditComponent(app.broadcastSection, app.api);
+    app.channelEdit = new ChannelEditComponent(app.broadcastSection, app.api, app.peer);
     app.statusComponent = new UpRadioStatusBar(app.statusSection, app.events);
     
     app.connectComponent = new ConnectComponent(app.nav);

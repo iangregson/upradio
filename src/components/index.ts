@@ -24,13 +24,11 @@ export class Component extends EventEmitter implements IComponent {
 
   show(): void {
     this.container.hidden = false;
-    this.container.style.display = 'inherit';
-    this.container.style.visibility = 'visible';
+    this.container.classList.remove('hidden');
   }
   hide(): void {
     this.container.hidden = true;
-    this.container.style.display = 'none';
-    this.container.style.visibility = 'hidden';
+    this.container.classList.add('hidden');
   }
 }
 
