@@ -1,7 +1,7 @@
 import template from './app.html';
 import './styles.css';
 import { UpRadioPeer, IUpRadioPeer, UpRadioPeerId, UpRadioPeerState, UpRadioPeerService } from './UpRadioPeer';
-import ConnectComponent, { EConnectComponentState } from './components/Connect/Connect.component';
+import ConnectComponent from './components/Connect/Connect.component';
 import { MediaConnection } from 'peerjs';
 import { LocalStreamComponent } from './components/Streams/LocalStream.component';
 import { RemoteStreamComponent } from './components/Streams/RemoteStream.component';
@@ -10,10 +10,10 @@ import { EventEmitter } from 'events';
 import { UpRadioStatusBar } from './components/Status';
 import logger, { LogLevel } from 'peerjs/lib/logger';
 import { IUpRadioAppState } from './UpRadioState';
-import { ChannelComponent } from './components/Channel/Channel.component';
+import { ChannelEditComponent } from './components/Channel/ChannelEdit.component';
 import { UpRadioApi, UpRadioChannelName } from './UpRadioApi';
 import { UpRadioApiError } from '@upradio-server/api';
-import { TargetChannel } from './components/Channel/TargetChannel.component';
+import { ChannelInfo } from './components/Channel/ChannelInfo.component';
 
 const HEARTBEAT_INTERVAL_SECONDS = 300;
 // const HEARTBEAT_INTERVAL_SECONDS = 5;
@@ -35,8 +35,8 @@ export class App {
   public localStream: LocalStreamComponent;
   public remoteStream: RemoteStreamComponent;
   public connectComponent: ConnectComponent;
-  public channel: ChannelComponent;
-  public targetChannel: TargetChannel;
+  public channelEdit: ChannelEditComponent;
+  public channelInfo: ChannelInfo;
   public statusComponent: UpRadioStatusBar;
   public api: UpRadioApi;
   public heartbeat: NodeJS.Timeout;
@@ -65,7 +65,7 @@ export class App {
         this.events.emit('status::message', { text: err.message, level: 'error' });
       })
     this.heartbeat = setInterval(() => {
-      this.api.heartbeat(this.channel.name)
+      this.api.heartbeat(this.channelEdit.name)
         .catch((err: UpRadioApiError) => {
           if (err.status === 409) {
             this.events.emit('status::error', { 
@@ -164,23 +164,23 @@ export class App {
 export class AppService {
   static engageBroadcastMode(app: App): void {
     UpRadioPeerService.closeMediaConnections(app.peer);
-    app.channel.show();
+    app.channelEdit.show();
     app.localStream.show();
-    app.targetChannel.hide();
+    app.channelInfo.hide();
     app.remoteStream.hide();
   }
   static engageListenMode(app: App): void {
     UpRadioPeerService.closeMediaConnections(app.peer);
-    app.channel.hide();
+    app.channelEdit.hide();
     app.localStream.hide();
     app.remoteStream.show();
   }
   static initComponents(app: App): void {
-    app.channel = new ChannelComponent(app.broadcastSection, app.api);
+    app.channelEdit = new ChannelEditComponent(app.broadcastSection, app.api);
     app.statusComponent = new UpRadioStatusBar(app.statusSection, app.events);
     
     app.connectComponent = new ConnectComponent(app.nav);
-    app.targetChannel = new TargetChannel(app.listenSection);
+    app.channelInfo = new ChannelInfo(app.listenSection);
     app.modeSwitch = new ModeSwitchComponent(app.nav);
     app.modeSwitch.on('MODE_SWITCH', app.onModeChange.bind(app));
 
@@ -191,8 +191,8 @@ export class AppService {
   }
   static initOptions(app: App, options: IUpRadioAppState) {
     app.connectComponent.input.value = options.targetChannelName || null;
-    app.channel.name = options.channelName || null;
-    app.channel.description = options.channelDescription || null;
+    app.channelEdit.name = options.channelName || null;
+    app.channelEdit.description = options.channelDescription || null;
     app.mode = options.mode || UpRadioMode.LISTEN;
     app.localStream.setSelectedDeviceId(options.audioDeviceId);
   }

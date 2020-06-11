@@ -1,4 +1,4 @@
-import template from './Channel.component.html';
+import template from './ChannelEdit.component.html';
 import { Component } from "..";
 import { UpRadioApi } from '@upradio-client/UpRadioApi';
 import { UpRadioApiError } from '@upradio-server/api';
@@ -10,7 +10,7 @@ export enum UpRadioChannelStatus {
   invalid = 'INVALID'
 }
 
-export class ChannelComponent extends Component {
+export class ChannelEditComponent extends Component {
   public parent: HTMLElement;
   public api: UpRadioApi;
 
@@ -20,7 +20,7 @@ export class ChannelComponent extends Component {
   private verifyBtn: HTMLButtonElement;
 
   constructor(parent: HTMLElement, api: UpRadioApi) {
-    super(parent, 'ChannelComponent', template);
+    super(parent, 'ChannelEditComponent', template);
     this.parent = parent;
     this.api = api;
     

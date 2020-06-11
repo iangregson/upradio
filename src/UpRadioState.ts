@@ -1,7 +1,7 @@
 import { App } from './app';
 import { UpRadioPeerId, UpRadioPeerState } from './UpRadioPeer';
 import { UpRadioMode } from './components/ModeSwitch/ModeSwitch.component';
-import { UpRadioChannelName } from './components/Channel/Channel.component';
+import { UpRadioChannelName } from './components/Channel/ChannelEdit.component';
 import { UpRadioApiSessionToken } from './UpRadioApi';
 
 interface UpRadioAppWindow extends Window {
