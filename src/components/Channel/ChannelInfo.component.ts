@@ -151,7 +151,7 @@ export class ChannelInfo extends Component {
   }
 
   public get description(): UpRadioChannelName {
-    return this.channelInfo.name;
+    return this.channelInfo.description;
   }
   
   public set mode(channelInfoMode: ChannelInfoMode) {

@@ -1,7 +1,7 @@
 import { App } from './app';
 import { UpRadioPeerId, UpRadioPeerState } from './UpRadioPeer';
 import { UpRadioMode } from './components/ModeSwitch/ModeSwitch.component';
-import { UpRadioChannelName } from './components/Channel/ChannelEdit.component';
+import { UpRadioChannelName, UpRadioChannelId } from './components/Channel/ChannelEdit.component';
 import { UpRadioApiSessionToken } from './UpRadioApi';
 
 interface UpRadioAppWindow extends Window {
@@ -18,6 +18,7 @@ export interface IUpRadioAppState {
   channelDescription?: string;
   sessionToken?: UpRadioApiSessionToken;
   channelImage?: string;
+  channelId?: UpRadioChannelId;
 }
 
 export class UpRadioAppState implements IUpRadioAppState {
@@ -136,19 +137,36 @@ export class UpRadioAppState implements IUpRadioAppState {
   }
 
   public get channelImage(): string {
-    let description: string;
+    let image: string;
     try {
       const w = <UpRadioAppWindow>this.w;
-      description = w.app.channelEdit.image;
+      image = w.app.channelEdit.image;
     } catch (_) { }
 
-    return description || this._.channelImage;
+    return image || this._.channelImage;
   }
   public set channelImage(imageBase64: string) {
     this._.channelImage = imageBase64;
     try {
       const w = <UpRadioAppWindow>this.w;
       w.app.channelEdit.image = imageBase64;
+    } catch (_) { }
+  }
+
+  public get channelId(): UpRadioChannelId {
+    let id: UpRadioChannelId;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      id = w.app.channelEdit.id;
+    } catch (_) { }
+
+    return id || this._.channelId;
+  }
+  public set channelId(id: UpRadioChannelId) {
+    this._.channelId = id;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      w.app.channelEdit.id = id;
     } catch (_) { }
   }
   

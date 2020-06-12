@@ -10,7 +10,7 @@ import { EventEmitter } from 'events';
 import { UpRadioStatusBar } from './components/Status';
 import logger, { LogLevel } from 'peerjs/lib/logger';
 import { IUpRadioAppState } from './UpRadioState';
-import { ChannelEditComponent } from './components/Channel/ChannelEdit.component';
+import { ChannelEditComponent, UpRadioChannelStatus } from './components/Channel/ChannelEdit.component';
 import { UpRadioApi, UpRadioChannelName } from './UpRadioApi';
 import { UpRadioApiError } from '@upradio-server/api';
 import { ChannelInfo } from './components/Channel/ChannelInfo.component';
@@ -68,11 +68,18 @@ export class App {
       });
     
      this.heartbeat = setInterval(() => {
-      this.api.heartbeat(this.channelEdit.name)
+      this.api.heartbeat(this.channelEdit.channelId)
         .catch((err: UpRadioApiError) => {
+          this.channelEdit.channelStatus = UpRadioChannelStatus.invalid;
           if (err.status === 409) {
-            this.events.emit('status::error', { 
-              message: 'Channel name conflict. Please choose a different channel name.'
+            this.events.emit('status::message', { 
+              text: 'Channel name conflict. Please choose a different channel name.',
+              level: 'error'
+            });
+          } else {
+            this.events.emit('status::message', { 
+              text: err.message,
+              level: 'error'
             });
           }
         });
@@ -184,6 +191,7 @@ export class AppService {
   }
   static initComponents(app: App): void {
     app.channelEdit = new ChannelEditComponent(app.broadcastSection, app.api, app.peer);
+    app.channelEdit.on('status::message', payload => app.events.emit('status::message', payload));
     app.statusComponent = new UpRadioStatusBar(app.statusSection, app.events);
     
     app.connectComponent = new ConnectComponent(app.nav);

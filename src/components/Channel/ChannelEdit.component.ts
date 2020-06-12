@@ -22,6 +22,7 @@ export class ChannelEditComponent extends Component {
   private nameInput: HTMLInputElement;
   private descriptionInput: HTMLTextAreaElement;
   private verifyBtn: HTMLButtonElement;
+  private copyUrlBtn: HTMLButtonElement;
   private channelEditBox: HTMLDivElement;
   private channelInfoBox: HTMLDivElement;
   private channelImageUpload: HTMLInputElement;
@@ -43,6 +44,8 @@ export class ChannelEditComponent extends Component {
     
     this.verifyBtn = this.container.querySelector('button#channelVerify');
     this.verifyBtn.onclick = this.verifyChannelName.bind(this);
+    this.copyUrlBtn = this.container.querySelector('button#copyUrl');
+    this.copyUrlBtn.onclick = this.copyUrl.bind(this);
     this.channelEditBox = this.container.querySelector('div#channelEditor');
     this.channelInfoBox = this.container.querySelector('div#channelInfo');
     this.channelInfo = new ChannelInfo(this.channelInfoBox);
@@ -62,8 +65,30 @@ export class ChannelEditComponent extends Component {
     };
   }
 
+  public static htmlEscape(s: string): string {
+    return s.trim()
+      .replace('&', '&amp;')
+      .replace('<', '&lt;')
+      .replace('>', '&gt;');
+  }
+
+  public static toUrlSlug(s: string): string {
+    return encodeURIComponent(s.trim()
+      .replace(/\s/g, '')
+      .replace(/[.!~*'()]/g, '')
+      .toLowerCase())
+      
+  }
+
+  public async copyUrl() {
+    const url = new URL(location.origin);
+    url.pathname = '/' + this.channelId;
+    await navigator.clipboard.writeText(url.toString())
+      .catch(console.error);
+  }
+
   public async verifyChannelName() {
-    await this.api.channelVerify(this.name)
+    await this.api.channelVerify(this.channelId)
       .then(() => {
         this.channelStatus = UpRadioChannelStatus.valid;
       })
@@ -77,36 +102,35 @@ export class ChannelEditComponent extends Component {
   }
   set channelStatus(status: UpRadioChannelStatus) {
     this._status = status;
-    // do things to alter the look and feel of the input here
-    // show error etc
-    // switch (status) {
-    //   case UpRadioChannelStatus.invalid:
-    //     this.parent.classList.remove('channelName__valid');
-    //     this.parent.classList.add('channelName__invalid');
-    //     break;
-    //   case UpRadioChannelStatus.valid:
-    //     this.parent.classList.remove('channelName__invalid');
-    //     this.parent.classList.add('channelName__valid');
-    //     break;
-    // }
-    this.emit('ChannelComponent::changed::status');
+    switch (status) {
+      case UpRadioChannelStatus.invalid:
+        this.nameInput.classList.add('border-red-500');
+        this.verifyBtn.classList.add('border-red-500');
+        this.emit('status::message', { text: 'Channel name invalid.', level: 'error' });
+        break;
+      case UpRadioChannelStatus.valid:
+        this.nameInput.classList.add('border-green-500');
+        this.verifyBtn.classList.add('border-green-500');
+        this.emit('status::message', { text: 'Channel verified.', level: 'success' });
+        break;
+    }
   }
 
   get name(): UpRadioChannelName {
-    return this.nameInput.value;
+    return this.channelInfo.name;
   }
   set name(name: string) {
     this.nameInput.value = name;
-    this.channelInfo.name = name;
+    this.channelInfo.name = ChannelEditComponent.htmlEscape(name);
+    this.channelInfo.id = ChannelEditComponent.toUrlSlug(name);
   }
 
   get description(): string {
     return this.descriptionInput.value;
-    // return this.descriptionInput.value;
   }
   set description(description: string) {
     this.descriptionInput.textContent = description;
-    this.channelInfo.description = description;
+    this.channelInfo.description = ChannelEditComponent.htmlEscape(description);
   }
   
   get image(): string {
@@ -115,5 +139,12 @@ export class ChannelEditComponent extends Component {
   set image(imageBase64: string) {
     if (!imageBase64) return;
     this.channelInfo.image = imageBase64;
+  }
+  
+  get channelId(): string {
+    return this.channelInfo.id;
+  }
+  set channelId(channelId: UpRadioChannelId) {
+    this.channelInfo.id = ChannelEditComponent.toUrlSlug(channelId);
   }
 }

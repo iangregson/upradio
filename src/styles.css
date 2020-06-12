@@ -36,6 +36,8 @@ button.btn {
   @apply text-center;
   @apply mx-2;
   @apply px-2;
+  @apply border;
+  @apply rounded;
 }
 
 input:focus, textarea:focus {

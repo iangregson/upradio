@@ -132,6 +132,10 @@ export class UpRadioApi {
     if (!response.ok && response.status === 409) {
       throw new UpRadioApiError(409, 'Channel name conflict');
     }
+    
+    if (!response.ok) {
+      throw new UpRadioApiError(response.status, response.statusText);
+    }
   }
   public async channelResolve(channelName: UpRadioChannelName): Promise<UpRadioPeerId> {
     if (!this.token) await this.login(this.peerId);

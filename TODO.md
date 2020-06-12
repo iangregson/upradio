@@ -21,12 +21,15 @@ TODO
 - [X] Add status icon to status component
 - [X] Top right menu icon
 - [X] Top right menu: connect to different channel / start broadcast
-- [ ] Sanitize inputs
-- [ ] Service worker / Lighthouse tests
+- [X] Sanitize inputs
+- [X] Channel info component + store in localhost
+- [X] Tailwind CSS styling, colors, fonts, etc
+- [X] Copy URL component
+- [ ] Send channel info / status over RPC
+- [ ] Service worker
+- [ ] Lighthouse tests
+- [ ] Performance improvements (remove tailwind unused css)
 - [ ] Basic Accessibility tests
-- [ ] Copy URL component
-- [ ] Channel info component + store in localhost
-- [ ] Tailwind CSS styling, colors, fonts, etc
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
 - [ ] Add listener count widget
 - [ ] Make ready for open source: github org, license and contributor files, remove keys, etc
