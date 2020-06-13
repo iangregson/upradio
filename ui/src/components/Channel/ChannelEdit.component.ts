@@ -66,6 +66,7 @@ export class ChannelEditComponent extends Component {
   }
 
   public static htmlEscape(s: string): string {
+    if (!s) return '';
     return s.trim()
       .replace('&', '&amp;')
       .replace('<', '&lt;')
@@ -73,6 +74,7 @@ export class ChannelEditComponent extends Component {
   }
 
   public static toUrlSlug(s: string): string {
+    if (!s) return '';
     return encodeURIComponent(s.trim()
       .replace(/\s/g, '')
       .replace(/[.!~*'()]/g, '')

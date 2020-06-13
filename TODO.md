@@ -25,11 +25,17 @@ TODO
 - [X] Channel info component + store in localhost
 - [X] Tailwind CSS styling, colors, fonts, etc
 - [X] Copy URL component
+- [X] Service worker (workbox / precache)
+- [ ] Rework directory structure
+- [ ] Build without parceljs
 - [ ] Send channel info / status over RPC
-- [ ] Service worker
 - [ ] Lighthouse tests
+  - [ ] Ensure aria-labels
+  - [ ] Ensure unique ids
+  - [ ] Ensure good button names
+  - [ ] Ensure fast performance
+  - [ ] Esnure correct PWA resources in place including service worker
 - [ ] Performance improvements (remove tailwind unused css)
-- [ ] Basic Accessibility tests
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
 - [ ] Add listener count widget
 - [ ] Make ready for open source: github org, license and contributor files, remove keys, etc
