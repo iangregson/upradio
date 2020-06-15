@@ -56,21 +56,21 @@
     Some help text goes in here...
   </div>
   
-  <script src="src/main.js"></script>
-
   <script>
     const year = new Date().getUTCFullYear();
     document.querySelector('footer > div#copyright').innerText += ` UpRadio ${year}`;
   </script>
 
   <script>
-    // Check that service workers are supported
-    if ('serviceWorker' in navigator) {
-      // Use the window load event to keep the page load performant
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js');
-      });
-    }
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('SW registered: ', registration);
+          }).catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+        });
+      }
   </script>
   
 </body>

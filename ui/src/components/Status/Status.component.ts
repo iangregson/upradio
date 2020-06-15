@@ -1,7 +1,6 @@
 import template from './Status.component.html';
 import { Component } from "..";
-import { EventEmitter } from 'events';
-import { App } from "../../app";
+import EventEmitter from 'eventemitter3';
 
 export enum UpRadioStatusMsgLevel {
   debug = 'log',

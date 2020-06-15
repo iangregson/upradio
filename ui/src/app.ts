@@ -1,19 +1,18 @@
 import template from './app.html';
-import './styles.css';
 import { UpRadioPeer, IUpRadioPeer, UpRadioPeerId, UpRadioPeerState, UpRadioPeerService } from './UpRadioPeer';
 import ConnectComponent from './components/Connect/Connect.component';
 import { MediaConnection } from 'peerjs';
 import { LocalStreamComponent } from './components/Streams/LocalStream.component';
 import { RemoteStreamComponent } from './components/Streams/RemoteStream.component';
 import { ModeSwitchComponent, UpRadioMode } from './components/ModeSwitch/ModeSwitch.component';
-import { EventEmitter } from 'events';
+import EventEmitter from 'eventemitter3';
 import { UpRadioStatusBar } from './components/Status';
-import logger, { LogLevel } from 'peerjs/lib/logger';
 import { IUpRadioAppState } from './UpRadioState';
 import { ChannelEditComponent, UpRadioChannelStatus } from './components/Channel/ChannelEdit.component';
 import { UpRadioApi, UpRadioChannelName } from './UpRadioApi';
-import { UpRadioApiError } from '@upradio-server/api';
+import { UpRadioApiError } from './UpRadioApi';
 import { ChannelInfo } from './components/Channel/ChannelInfo.component';
+import logger, { LogLevel } from './components/logger';
 
 const HEARTBEAT_INTERVAL_SECONDS = 300;
 // const HEARTBEAT_INTERVAL_SECONDS = 5;

@@ -16,8 +16,8 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {
-      "@upradio-client": path.resolve(process.cwd(), 'src'),
-      "@upradio-server": path.resolve(process.cwd(), 'workers-site/src')
+      "@upradio-client": path.resolve(__dirname, '..', 'ui', 'src'),
+      "@upradio-server": path.resolve(__dirname, 'src')
     }
   },
   output: {

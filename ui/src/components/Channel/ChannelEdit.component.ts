@@ -1,7 +1,7 @@
 import template from './ChannelEdit.component.html';
 import { Component } from "..";
 import { UpRadioApi } from '@upradio-client/UpRadioApi';
-import { UpRadioApiError } from '@upradio-server/api';
+import { UpRadioApiError } from '../../UpRadioApi';
 import { ChannelInfo, ChannelInfoMode } from './ChannelInfo.component';
 import { UpRadioPeer } from '@upradio-client/UpRadioPeer';
 

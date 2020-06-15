@@ -1,6 +1,6 @@
 import Peer, { DataConnection, MediaConnection } from 'peerjs';
 import { v4 as uuid } from 'uuid';
-import EventEmitter from 'events';
+import EventEmitter from 'eventemitter3';
 import { UpRadioPeerRpcMsg, UpRadioPeerRpcService } from './UpRadioPeerRpc';
 
 export const MAX_CONNECTIONS: number = Number(process.env.MAX_CONNECTIONS) || 1;
@@ -41,7 +41,6 @@ export class UpRadioPeer implements IUpRadioPeer {
   constructor(id?: UpRadioPeerId, status?: UpRadioPeerState, debug: number = 3) {
     this.id = id || uuid();
     this.status = status || UpRadioPeerState.OFF_AIR;
-    
     this.peer = new Peer(this.id, {
       debug,
       host: 'upradio.herokuapp.com',

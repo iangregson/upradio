@@ -10,7 +10,7 @@ export interface IUpRadioStream {
 
 export class LocalStreamComponent extends Component implements IUpRadioStream {
   private devices: MediaDeviceInfo[];
-  private audioInputSelect: HTMLSelectElement;
+  private audioInputSelect: any;
   public freqMeter: FreqMeter;
   public broadcastBtn: HTMLButtonElement;
   public stopBroadcastingBtn: HTMLButtonElement;
@@ -27,7 +27,7 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
     this.broadcastStatusText = this.container.querySelector('span#broadcastStatus');
     this.statusPanel = this.container.querySelector('div#broadcastStatusPanel');
     this.freqMeter = new FreqMeter(this.statusPanel);
-    this.audioInputSelect = container.querySelector('select#audioSource');
+    this.audioInputSelect = <any>container.querySelector('select#audioSource');
     this.initDeviceList();
   }
 

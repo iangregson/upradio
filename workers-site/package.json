@@ -1,10 +1,10 @@
 {
   "private": true,
-  "name": "worker",
+  "name": "upradio_workers-site",
   "version": "1.0.0",
-  "description": "A template for kick starting a Cloudflare Workers project",
-  "main": "index.js",
-  "author": "Ashley Lewis <ashleymichal@gmail.com>",
+  "description": "Universal Public Radio | p2p audio broadcasting",
+  "main": "src/index.js",
+  "author": "Ian Gregson",
   "license": "MIT",
   "dependencies": {
     "@cloudflare/kv-asset-handler": "0.0.5",

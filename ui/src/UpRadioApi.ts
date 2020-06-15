@@ -1,7 +1,21 @@
 import { UpRadioPeerId } from "./UpRadioPeer/UpRadioPeer";
 import Base64 from 'crypto-js/enc-base64';
 import Utf8 from 'crypto-js/enc-utf8';
-import { UpRadioApiError } from "@upradio-server/api";
+
+export class UpRadioApiError extends Error {
+  status: number
+  message: string;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.message = message;
+    this.status = status;
+  }
+
+  toResponse(): Response {
+    return new Response(this.message, { status: this.status });
+  }
+}
 
 export type UpRadioChannelName = string;
 export type UpRadioApiSessionToken = string;
@@ -26,8 +40,12 @@ export class UpRadioApiService {
         'Accept': 'text/html',    
         'Content-Type': 'application/json'
       }
-    }).then((r: Response) => r.text() || null)
-      .catch((_: Error) => null)
+    }).then((r: Response) => {
+      if (!r.ok) {
+        throw new UpRadioApiError(r.status, r.statusText);
+      }
+      return r.text();
+    })
   }
   static async channelVerify(token: UpRadioApiSessionToken, channelName: UpRadioChannelName): Promise<Response> {
     return fetch('/api/channel/verify', {
@@ -87,7 +105,7 @@ export class UpRadioApi {
     while (!this.token) {
       await backoff();
 
-      await this.login(this.peerId);
+      await this.login(this.peerId).catch(console.error);
 
       if (!this.token) {
         delaySeconds += delaySeconds === 0 ? 1 : delaySeconds;
