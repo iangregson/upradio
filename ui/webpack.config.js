@@ -38,7 +38,8 @@ module.exports = {
     },
   },
   performance: {
-    maxEntrypointSize: 1048576
+    maxEntrypointSize: 1048576,
+    maxAssetSize: 1048576
   },
   plugins: [
     new CleanWebpackPlugin(),
@@ -46,8 +47,7 @@ module.exports = {
     new MiniCssExtractPlugin({ filename: 'main.css' }),
     new webpack.DefinePlugin({
       'process.env.PEER_KEY': JSON.stringify(dotenv.parsed.PEER_KEY),
-      'process.env.MAX_CONNECTIONS': JSON.stringify(dotenv.parsed.MAX_CONNECTIONS),
-      'process.env.DEBUG_LEVEL': JSON.stringify(dotenv.parsed.DEBUG_LEVEL)
+      'process.env.MAX_CONNECTIONS': JSON.stringify(dotenv.parsed.MAX_CONNECTIONS)
     }),
     new CopyPlugin({
       patterns: [

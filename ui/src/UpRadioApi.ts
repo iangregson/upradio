@@ -105,7 +105,7 @@ export class UpRadioApi {
     while (!this.token) {
       await backoff();
 
-      await this.login(this.peerId).catch(console.error);
+      await this.login(this.peerId).catch(err => window.logger.error(err));
 
       if (!this.token) {
         delaySeconds += delaySeconds === 0 ? 1 : delaySeconds;

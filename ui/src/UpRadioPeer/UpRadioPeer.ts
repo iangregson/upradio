@@ -97,45 +97,45 @@ export class UpRadioPeerService {
     });
 
     peer.on('disconnected', () => {
-      console.log('Connection lost. Please reconnect');
-      // Workaround for peer.reconnect deleting previous id
+      window.logger.log('Connection lost. Please reconnect');
+      // Workaround for peer.reconnect deleting previous idk
       peer.reconnect();
     });
 
     peer.on('close', () => {
       peer.dataConnections.clear()
       peer.mediaConnections.clear()
-      console.log('Connection destroyed. Please refresh');
+      window.logger.log('Connection destroyed. Please refresh');
     });
 
     peer.on('error', (err: any) => {
-      console.error('UpradioPeerError: ', err);
+      window.logger.error('UpradioPeerError: ', err);
     });
   }
   static initMediaConnection(peer: UpRadioPeer, connection: MediaConnection): void {
-    console.log('MediaConnection with ' + connection.peer);
+    window.logger.log('MediaConnection with ' + connection.peer);
     
     connection.on('close', () => {
-      console.log('MediaConnection closed on peer id ' + connection.peer);
+      window.logger.log('MediaConnection closed on peer id ' + connection.peer);
       peer.mediaConnections.delete(connection.peer);
     });
     
     connection.on('error', (err: any) => {
-      console.error('MediaConnectionError for peer id ' + connection.peer, err);
+      window.logger.error('MediaConnectionError for peer id ' + connection.peer, err);
     });
     
     peer.mediaConnections.set(connection.peer, connection);
   }
   static initDataConnection(peer: UpRadioPeer, connection: DataConnection): void {
-    console.log('DataConnection with ' + connection.peer);
+    window.logger.log('DataConnection with ' + connection.peer);
     
     connection.on('close', () => {
-      console.log('DataConnection closed on peer id ' + connection.peer);
+      window.logger.log('DataConnection closed on peer id ' + connection.peer);
       peer.dataConnections.delete(connection.peer);
     });
     
     connection.on('error', (err: any) => {
-      console.error('DataConnectionError for peer id ' + connection.peer, err);
+      window.logger.error('DataConnectionError for peer id ' + connection.peer, err);
     });
 
     connection.on('data', (data: string) => {

@@ -1,6 +1,6 @@
 // With big thanks to PeerJS
 
-const LOG_PREFIX = 'UpRadio: ';
+const LOG_PREFIX = 'UpRadio';
 
 /*
 Prints log messages depending on the debug level passed in. Defaults to 0.
@@ -10,59 +10,60 @@ Prints log messages depending on the debug level passed in. Defaults to 0.
 3  Prints all logs.
 */
 export enum LogLevel {
-    Disabled,
-    Errors,
-    Warnings,
-    All
+  Disabled,
+  Errors,
+  Warnings,
+  All
 }
 
-class Logger {
-    private _logLevel = LogLevel.Disabled;
+export class Logger {
+  private logLevel = LogLevel.Disabled;
+  
+  constructor(logLevel?: LogLevel) {
+    this.logLevel = logLevel || LogLevel.Disabled;
+  }
 
-    get logLevel(): LogLevel { return this._logLevel; }
-
-    set logLevel(logLevel: LogLevel) { this._logLevel = logLevel; }
-
-    log(...args: any[]) {
-        if (this._logLevel >= LogLevel.All) {
-            this._print(LogLevel.All, ...args);
-        }
+  log(...args: any[]) {
+    if (this.logLevel >= LogLevel.All) {
+      this._print('log', ...args);
     }
-
-    warn(...args: any[]) {
-        if (this._logLevel >= LogLevel.Warnings) {
-            this._print(LogLevel.Warnings, ...args);
-        }
+  }
+  
+  debug(...args: any[]) {
+    if (this.logLevel >= LogLevel.All) {
+      this._print('debug', ...args);
     }
-
-    error(...args: any[]) {
-        if (this._logLevel >= LogLevel.Errors) {
-            this._print(LogLevel.Errors, ...args);
-        }
+  }
+  
+  info(...args: any[]) {
+    if (this.logLevel >= LogLevel.All) {
+      this._print('info', ...args);
     }
+  }
 
-    setLogFunction(fn: (logLevel: LogLevel, ..._: any[]) => void): void {
-        this._print = fn;
+  warn(...args: any[]) {
+    if (this.logLevel >= LogLevel.Warnings) {
+      this._print('warn', ...args);
     }
+  }
 
-    private _print(logLevel: LogLevel, ...rest: any[]): void {
-        const copy = [LOG_PREFIX, ...rest];
-
-        for (let i in copy) {
-            if (copy[i] instanceof Error) {
-                copy[i] = "(" + copy[i].name + ") " + copy[i].message;
-
-            }
-        }
-
-        if (logLevel >= LogLevel.All) {
-            console.log(...copy);
-        } else if (logLevel >= LogLevel.Warnings) {
-            console.warn("WARNING", ...copy);
-        } else if (logLevel >= LogLevel.Errors) {
-            console.error("ERROR", ...copy);
-        }
+  error(...args: any[]) {
+    if (this.logLevel >= LogLevel.Errors) {
+      this._print('error', ...args);
     }
+  }
+
+  private _print(level: string, ...rest: any[]): void {
+    const copy = [`${LOG_PREFIX} ${level.toUpperCase()} ::`, ...rest];
+
+    for (let i in copy) {
+      if (copy[i] instanceof Error) {
+        copy[i] = "(" + copy[i].name + ") " + copy[i].message;
+
+      }
+    }
+    console[level](...copy);
+  }
 }
 
 export default new Logger();

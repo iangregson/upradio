@@ -12,13 +12,13 @@ import { ChannelEditComponent, UpRadioChannelStatus } from './components/Channel
 import { UpRadioApi, UpRadioChannelName } from './UpRadioApi';
 import { UpRadioApiError } from './UpRadioApi';
 import { ChannelInfo } from './components/Channel/ChannelInfo.component';
-import logger, { LogLevel } from './components/logger';
+import { Logger, LogLevel } from './components/logger';
 
 const HEARTBEAT_INTERVAL_SECONDS = 300;
 // const HEARTBEAT_INTERVAL_SECONDS = 5;
-const DEBUG_LEVEL: number  = Number(process.env.DEBUG_LEVEL) || LogLevel.Errors;
-logger.logLevel = DEBUG_LEVEL;
-window.logger = logger;
+const DEBUG_LEVEL: number  = Number(process.env.DEBUG_LEVEL);
+
+window.logger = new Logger(DEBUG_LEVEL);
 
 export class App {
   public root: HTMLElement;
@@ -135,7 +135,7 @@ export class App {
   public async disconnect(): Promise<void> {
     this.events.emit('status::message', { text: 'Disconnecting...', level: 'info' });
     UpRadioPeerService.closeMediaConnections(this.peer);
-    await this.remoteStream.stop().catch(console.error);
+    await this.remoteStream.stop().catch(err => window.logger.error(err));
     this.peer.status = UpRadioPeerState.OFF_AIR;
     this.events.emit('status::message', { text: 'Disconnected', level: 'info' });
     this.peer.off('call', (call: MediaConnection) => {
@@ -194,7 +194,7 @@ export class AppService {
     app.statusComponent = new UpRadioStatusBar(app.statusSection, app.events);
     
     app.connectComponent = new ConnectComponent(app.nav);
-    app.channelInfo = new ChannelInfo(app.listenSection);
+    app.channelInfo = new ChannelInfo(app.listenSection, 'UpRadioChannelInfo-Listen');
     app.modeSwitch = new ModeSwitchComponent(app.nav);
     app.modeSwitch.on('MODE_SWITCH', app.onModeChange.bind(app));
 

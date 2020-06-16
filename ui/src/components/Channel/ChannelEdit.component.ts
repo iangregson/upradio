@@ -48,7 +48,7 @@ export class ChannelEditComponent extends Component {
     this.copyUrlBtn.onclick = this.copyUrl.bind(this);
     this.channelEditBox = this.container.querySelector('div#channelEditor');
     this.channelInfoBox = this.container.querySelector('div#channelInfo');
-    this.channelInfo = new ChannelInfo(this.channelInfoBox);
+    this.channelInfo = new ChannelInfo(this.channelInfoBox, 'UpRadioChannelInfo-Listen');
     this.channelInfo.init({ peerId: this.peer.id });
     this.channelInfo.mode = ChannelInfoMode.READ_WRITE;
     this.channelInfo.editBtn.onclick = () => this.channelEditBox.classList.toggle('hidden');
@@ -86,7 +86,7 @@ export class ChannelEditComponent extends Component {
     const url = new URL(location.origin);
     url.pathname = '/' + this.channelId;
     await navigator.clipboard.writeText(url.toString())
-      .catch(console.error);
+      .catch(err => window.logger.error(err));
   }
 
   public async verifyChannelName() {

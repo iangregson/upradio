@@ -46,10 +46,10 @@ export class UpRadioStatusBar extends Component {
 
     switch (msg.level) {
       case UpRadioStatusMsgLevel.debug:
-        window.logger.log(msg.text);
+        window.logger.debug(msg.text);
         break;
       case UpRadioStatusMsgLevel.info:
-        window.logger.log(msg.text);
+        window.logger.info(msg.text);
         break;
       case UpRadioStatusMsgLevel.log:
         window.logger.log(msg.text);

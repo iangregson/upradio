@@ -26,7 +26,7 @@
       <h5 class="text-sm">p2p audio broadcasting</h5>
     </div>
     <div id="headerMenuIcon" class="flex-initial">
-      <button id="headerMenuBtn" type="button">
+      <button id="headerMenuBtn" type="button" aria-label="Header menu button" title="Header menu button">
         <svg class="link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
       </button>
     </div>
@@ -46,7 +46,7 @@
       </a>
     </div>
     <div id="helpLink" class="footerItem text-right">
-      <button id="helpBtn" type="button">
+      <button id="helpBtn" type="button" aria-label="Help button" title="Help button">
         <svg class="link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm2-13c0 .28-.21.8-.42 1L10 9.58c-.57.58-1 1.6-1 2.42v1h2v-1c0-.29.21-.8.42-1L13 9.42c.57-.58 1-1.6 1-2.42a4 4 0 1 0-8 0h2a2 2 0 1 1 4 0zm-3 8v2h2v-2H9z"/></svg>
       </button>
     </div>
@@ -64,11 +64,9 @@
   <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then(registration => {
-            console.log('SW registered: ', registration);
-          }).catch(registrationError => {
-            console.log('SW registration failed: ', registrationError);
-          });
+          navigator.serviceWorker
+            .register('/sw.js')
+            .catch(console.error);
         });
       }
   </script>

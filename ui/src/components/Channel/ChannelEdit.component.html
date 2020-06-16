@@ -8,8 +8,8 @@
   <label for="channelName">Channel name</label>
   <div class="flex flex-row">
     <input class="flex-1" id="channelName" type="text" name="channelName" aria-label="Channel name"/>
-    <button class="btn flex-initial" type="button" id="channelVerify">Verify</button>
-    <button class="btn flex-initial" type="button" id="copyUrl">Copy URL</button>
+    <button class="btn flex-initial" type="button" id="channelVerify" aria-label="Verify channel name is valid" title="Verify channel name is valid">Verify</button>
+    <button class="btn flex-initial" type="button" id="copyUrl" aria-label="Copy your channel URL to clipboard" title="Copy your channel URL to clipboard">Copy URL</button>
   </div>
   
   <label for="channelDescription">Channel description</label>
@@ -17,18 +17,3 @@
     <textarea class="flex-1" id="channelDescription" name="channelDescription" maxlength="240"></textarea>
   </div>
 </div>
-<!-- 
-
-<div id="channelImagePlaceholder" class="flex flex-1">
-  <svg class="main-mode-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M20 9v9a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8c0-1.1.9-2 2-2h13.8L.74 1.97 1.26.03 20 5.06V9zm-5 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 8v2h16V8H2zm1.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm6.5-1a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
-</div>
-<div id="channelImage" class="channel-image"></div>
-<div id="channelName" class="hidden flex-initial flex flex-row items-center">
-  <h1 class="flex-1 text-3xl"></h1>
-  <div id="expandInfoIcon" class="flex-initial">
-    <button id="expandInfoBtn" type="button" class="align-middle hidden">
-      <svg class="h-6 fill-current text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M4 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm6 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm6 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
-    </button>
-  </div>
-</div>
-<div id="channelDescription" class="hidden flex-initial"><p class="text-sm text-gray-300"></p></div> -->

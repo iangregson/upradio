@@ -34,8 +34,8 @@ export class ChannelInfo extends Component {
   editBtn: HTMLButtonElement;  
   _mode = ChannelInfoMode.READ;
 
-  constructor(parent: HTMLElement) {
-    super(parent, 'UpRadioChannelInfo', template);
+  constructor(parent: HTMLElement, componentId = 'UpRadioChannelInfo') {
+    super(parent, componentId, template);
     this.parent.classList.add('flex');
     this.parent.classList.add('flex-col');
     this.parent.classList.add('flex-grow');

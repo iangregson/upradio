@@ -1,4 +1,4 @@
-all: clean build deploy
+all: build deploy
 .PHONY: all
 
 clean:
@@ -8,4 +8,7 @@ build:
 	npm --prefix ./ui run build
 
 deploy:
-	wrangler deploy
+	wrangler publish
+
+start:
+	npm --prefix ./ui start
