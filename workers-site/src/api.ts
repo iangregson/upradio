@@ -1,9 +1,12 @@
-import { UpRadioApiSessionToken } from "@upradio-client/UpRadioApi";
+
 import { UpRadioAuthService } from './auth';
-import { UpRadioPeerId } from "@upradio-client/UpRadioPeer/UpRadioPeer";
 import { UpRadioChannelService } from './channel';
 import { UpRadioKvStore } from './kvstore';
 
+export type UpRadioPeerId = string;
+export type UpRadioApiSessionToken = string;
+
+export const API_KEY_HEADER_NAME = 'X-UpRadio-Api-Token';
 
 export interface IUpRadioApiRequest extends Request {
   isAuthenticated: boolean;

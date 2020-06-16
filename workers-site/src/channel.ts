@@ -1,6 +1,7 @@
-import { UpRadioChannelName } from "@upradio-client/UpRadioApi";
-import { UpRadioPeerId } from "@upradio-client/UpRadioPeer/UpRadioPeer";
+import { UpRadioPeerId } from "./api";
 import { UpRadioKvStore } from './kvstore';
+
+export type UpRadioChannelName = string;
 
 export class UpRadioChannelService {
   static async verify(channelName: UpRadioChannelName, peerId: UpRadioPeerId): Promise<boolean> {

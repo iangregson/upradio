@@ -1,9 +1,8 @@
-import { UpRadioApiSessionToken, API_KEY_HEADER_NAME } from "@upradio-client/UpRadioApi";
+import { UpRadioApiSessionToken, API_KEY_HEADER_NAME } from "./api";
 import sha256 from 'crypto-js/sha256';
 import Base64 from 'crypto-js/enc-base64';
 import Utf8 from 'crypto-js/enc-utf8';
-import { UpRadioApiError } from "./api";
-import { UpRadioPeerId } from "@upradio-client/UpRadioPeer/UpRadioPeer";
+import { UpRadioApiError, UpRadioPeerId } from "./api";
 import { IUpRadioApiRequest } from './api';
 import { UpRadioKvStore } from './kvstore';
 
