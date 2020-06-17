@@ -6,6 +6,7 @@ config.devtool = 'source-map';
 config.mode = 'development';
 config.devServer = {
   contentBase: path.join(__dirname, 'dist'),
+  historyApiFallback: true,
   compress: true,
   port: 1234,
   host: '0.0.0.0',

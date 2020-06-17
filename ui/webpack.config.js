@@ -10,6 +10,7 @@ const path = require('path');
 module.exports = {
   entry: ['./src/main.js','./src/styles.css'],
   output: {
+    publicPath: "/",
     filename: 'main.js',
     path: path.resolve(__dirname, '..', 'dist'),
   },

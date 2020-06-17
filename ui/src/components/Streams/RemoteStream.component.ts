@@ -4,9 +4,9 @@ import { IUpRadioStream } from "./LocalStream.component";
 import { UpRadioAudioService } from '../LevelMeter';
 
 export class RemoteStreamComponent extends Component implements IUpRadioStream {
-  private audioOutput: HTMLAudioElement;
-  private playBtn: HTMLButtonElement;
-  private stopBtn: HTMLButtonElement;
+  public audioOutput: HTMLAudioElement;
+  public playBtn: HTMLButtonElement;
+  public stopBtn: HTMLButtonElement;
 
   public stream: MediaStream;
   private dialToneGenerator: OscillatorNode;
@@ -17,9 +17,7 @@ export class RemoteStreamComponent extends Component implements IUpRadioStream {
 
     this.audioOutput = container.querySelector('audio#UpRadioAudioOutput');
     this.playBtn = container.querySelector('button#UpRadioAudioOutput-play');
-    this.playBtn.onclick = () => this.audioOutput.play();
     this.stopBtn = container.querySelector('button#UpRadioAudioOutput-stop');
-    this.stopBtn.onclick = () => this.audioOutput.pause();
     this.hideBtn(this.stopBtn);
 
     this.audioOutput.onplay = () => {
@@ -44,9 +42,11 @@ export class RemoteStreamComponent extends Component implements IUpRadioStream {
     this.stream = stream;
     this.audioOutput.srcObject = stream;
     this.dialToneGenerator.start();
+    this.audioOutput.play();
   }
   public async stop(): Promise<void> {
     this.stream = null;
+    this.audioOutput.pause();
     this.audioOutput.srcObject = null;
     this.dialToneGenerator.stop();
   }
@@ -56,4 +56,5 @@ export class RemoteStreamComponent extends Component implements IUpRadioStream {
     this.dialToneGenerator = oscillator;
     this.dialTone = outputStream.stream;
   }
+
 }

@@ -8,7 +8,7 @@ import { ModeSwitchComponent, UpRadioMode } from './components/ModeSwitch/ModeSw
 import EventEmitter from 'eventemitter3';
 import { UpRadioStatusBar } from './components/Status';
 import { IUpRadioAppState } from './UpRadioState';
-import { ChannelEditComponent, UpRadioChannelStatus } from './components/Channel/ChannelEdit.component';
+import { ChannelEditComponent, UpRadioChannelStatus, UpRadioChannelId } from './components/Channel/ChannelEdit.component';
 import { UpRadioApi, UpRadioChannelName } from './UpRadioApi';
 import { UpRadioApiError } from './UpRadioApi';
 import { ChannelInfo } from './components/Channel/ChannelInfo.component';
@@ -101,12 +101,12 @@ export class App {
     this.modeSwitch.value = mode;
   }
 
-  public async connect(channelName: UpRadioChannelName): Promise<void> {
+  public async connect(channelId: UpRadioChannelId): Promise<void> {
     this.events.emit('status::message', { text: 'Connecting...', level: 'info' });
     this.peer.status = UpRadioPeerState.RELAY;
     this.remoteStream.getDialTone();
     
-    const peerId = await this.api.channelResolve(channelName)
+    const peerId = await this.api.channelResolve(channelId)
       .catch((err: UpRadioApiError) => {
         this.events.emit('status::message', { text: err.message, level: 'error' });
       });
@@ -199,6 +199,9 @@ export class AppService {
     app.modeSwitch.on('MODE_SWITCH', app.onModeChange.bind(app));
 
     app.remoteStream = new RemoteStreamComponent(app.streamSection);
+    app.remoteStream.playBtn.onclick = () => app.connect(app.connectComponent.input.value);
+    app.remoteStream.stopBtn.onclick = () => app.disconnect();
+    
     app.localStream = new LocalStreamComponent(app.streamSection);
     app.localStream.broadcastBtn.onclick = app.broadcast.bind(app);
     app.localStream.stopBroadcastingBtn.onclick = app.stopBroadcast.bind(app);
