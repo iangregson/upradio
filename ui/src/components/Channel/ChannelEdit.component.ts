@@ -119,12 +119,12 @@ export class ChannelEditComponent extends Component {
   }
 
   get name(): UpRadioChannelName {
-    return this.channelInfo.name;
+    return this.nameInput.value;
   }
   set name(name: string) {
     this.nameInput.value = name;
     this.channelInfo.name = ChannelEditComponent.htmlEscape(name);
-    this.channelInfo.id = ChannelEditComponent.toUrlSlug(name);
+    this.channelInfo.channelId = ChannelEditComponent.toUrlSlug(name);
   }
 
   get description(): string {
@@ -144,9 +144,9 @@ export class ChannelEditComponent extends Component {
   }
   
   get channelId(): string {
-    return this.channelInfo.id;
+    return this.channelInfo.channelId;
   }
   set channelId(channelId: UpRadioChannelId) {
-    this.channelInfo.id = ChannelEditComponent.toUrlSlug(channelId);
+    this.channelInfo.channelId = ChannelEditComponent.toUrlSlug(channelId);
   }
 }

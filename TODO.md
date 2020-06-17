@@ -29,15 +29,16 @@ TODO
 - [X] Rework directory structure
 - [X] Build without parceljs
 - [X] Remove tailwind unused css
-- [ ] Webpack dev server
-- [ ] Send channel info / status over RPC
-- [ ] Lighthouse tests
-  - [ ] Ensure aria-labels
-  - [ ] Ensure unique ids
-  - [ ] Ensure good button names
-  - [ ] Ensure fast performance
-  - [ ] Don't log to the console when in prod
+- [X] Webpack dev server
+- [X] Lighthouse tests
+  - [X] Ensure aria-labels
+  - [X] Ensure unique ids
+  - [X] Ensure good button names
+  - [X] Ensure fast performance
+  - [X] Don't log to the console when in prod
   - [X] Esnure correct PWA resources in place including service worker
+- [ ] Fix channel ID not registering with cloudflare
+- [ ] Send channel info / status over RPC
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
 - [ ] Add listener count widget
 - [ ] Make ready for open source: github org, license and contributor files, remove keys, etc
