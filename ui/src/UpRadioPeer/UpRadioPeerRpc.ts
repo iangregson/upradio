@@ -1,10 +1,12 @@
 import { UpRadioPeerId, UpRadioPeer } from './UpRadioPeer';
 import { DataConnection } from 'peerjs';
 import { v4 as uuid } from 'uuid';
+import { UpRadioChannelInfo } from '@upradio-client/components/Channel/ChannelInfo.component';
 
 export enum UpRadioPeerRPCMessageType {
   ack = 'ack',
   nextPeer = 'nextPeer',
+  setChannelInfo = 'setChannelInfo',
   chat = 'chat'
 }
 
@@ -54,6 +56,12 @@ export class UpRadioPeerRpcMsg implements IUpRadioPeerRPCMessage {
     this.params = [nextPeerId];
     return this;
   }
+  
+  setChannelInfo(channelInfo: UpRadioChannelInfo): IUpRadioPeerRPCMessage {
+    this.type = UpRadioPeerRPCMessageType.setChannelInfo;
+    this.params = [channelInfo];
+    return this;
+  }
 }
 
 export class UpRadioPeerRpcService {
@@ -71,10 +79,16 @@ export class UpRadioPeerRpcService {
     }
   }
   static handleMessage(peer: UpRadioPeer, msg: IUpRadioPeerRPCMessage): void {
+    window.logger.debug(`RPC::receive::${msg.type}`, msg);
     peer.events.emit(msg.type, msg.params);
   }
   static nextPeer(peer: UpRadioPeer, connection: DataConnection, nextPeerId: UpRadioPeerId): void {
-    const msg = new UpRadioPeerRpcMsg(peer.id).nextPeer(nextPeerId)
-    connection.send(msg);
+    const msg = new UpRadioPeerRpcMsg(peer.id).nextPeer(nextPeerId);
+    connection.send(JSON.stringify(msg));
+  }
+  static setChannelInfo(peer: UpRadioPeer, connection: DataConnection, channelInfo: UpRadioChannelInfo): void {
+    const msg = new UpRadioPeerRpcMsg(peer.id).setChannelInfo(channelInfo);
+    window.logger.debug('RPC::send::setChannelInfo', channelInfo);
+    connection.send(JSON.stringify(msg));
   }
 }

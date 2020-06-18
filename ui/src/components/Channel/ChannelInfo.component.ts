@@ -53,25 +53,6 @@ export class ChannelInfo extends Component {
     this.infoBtn = this.nameBox.querySelector('button#expandInfoBtn');
     this.infoBtn.onclick = () => this.descriptionBox.classList.toggle('hidden');
     this.editBtn = this.nameBox.querySelector('button#editInfoBtn');
-
-    // setTimeout(() => {
-    //   this.init({
-    //     id: 'scotswhayhae',
-    //     peerId: uuid(),
-    //     name: 'Scots Whay Hae!',
-    //     description: `Talking about Scottish culture so you don't have to`
-    //   });
-    // }, 1500)
-    
-    // setTimeout(() => {
-    //   this.init({
-    //     id: 'scotswhayhae',
-    //     peerId: uuid(),
-    //     name: 'Scots Whay Hae!',
-    //     image: SWH_IMG,
-    //     description: `Talking about Scottish culture so you don't have to`
-    //   });
-    // }, 3000)
   }
   public init(channelInfo: UpRadioChannelInfo) {
     channelInfo.name && (this.name = channelInfo.name);
@@ -80,6 +61,10 @@ export class ChannelInfo extends Component {
     channelInfo.peerId && this.makeAvatar();
     channelInfo.image && (this.image = channelInfo.image);
     channelInfo.description && (this.description = channelInfo.description);
+  }
+
+  public toJSON(): UpRadioChannelInfo {
+    return this.channelInfo;
   }
 
   private makeAvatar() {

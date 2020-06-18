@@ -37,8 +37,13 @@ TODO
   - [X] Ensure fast performance
   - [X] Don't log to the console when in prod
   - [X] Esnure correct PWA resources in place including service worker
-- [ ] Fix channel ID not registering with cloudflare
-- [ ] Send channel info / status over RPC
+- [X] Fix channel ID not registering with cloudflare
+- [X] Set up local wrangler for better iteration on LISTEN experience
+- [X] Send channel info / status over RPC
+- [X] LISTEN: autoconnect
+- [X] LISTEN: channel info
+- [ ] LISTEN: better interation on play / pause controls
+- [ ] LISTEN: ON_AIR indicator + level meter
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
 - [ ] Add listener count widget
 - [ ] Make ready for open source: github org, license and contributor files, remove keys, etc

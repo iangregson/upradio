@@ -1,7 +1,7 @@
 import template from './app.html';
 import { UpRadioPeer, IUpRadioPeer, UpRadioPeerId, UpRadioPeerState, UpRadioPeerService } from './UpRadioPeer';
 import ConnectComponent from './components/Connect/Connect.component';
-import { MediaConnection } from 'peerjs';
+import { MediaConnection, DataConnection } from 'peerjs';
 import { LocalStreamComponent } from './components/Streams/LocalStream.component';
 import { RemoteStreamComponent } from './components/Streams/RemoteStream.component';
 import { ModeSwitchComponent, UpRadioMode } from './components/ModeSwitch/ModeSwitch.component';
@@ -11,8 +11,9 @@ import { IUpRadioAppState } from './UpRadioState';
 import { ChannelEditComponent, UpRadioChannelStatus, UpRadioChannelId } from './components/Channel/ChannelEdit.component';
 import { UpRadioApi, UpRadioChannelName } from './UpRadioApi';
 import { UpRadioApiError } from './UpRadioApi';
-import { ChannelInfo } from './components/Channel/ChannelInfo.component';
+import { ChannelInfo, UpRadioChannelInfo } from './components/Channel/ChannelInfo.component';
 import { Logger, LogLevel } from './components/logger';
+import { UpRadioPeerRpcService } from './UpRadioPeer/UpRadioPeerRpc';
 
 const HEARTBEAT_INTERVAL_SECONDS = 300;
 // const HEARTBEAT_INTERVAL_SECONDS = 5;
@@ -56,6 +57,7 @@ export class App {
     
     AppService.initComponents(this);
     AppService.initOptions(this, options);
+    AppService.initEvents(this);
     AppService.switchMode(this, this.mode);
 
     this.events.emit('status::message', { text: 'Creating session...', level: 'log' });
@@ -83,11 +85,6 @@ export class App {
           }
         });
     }, HEARTBEAT_INTERVAL_SECONDS * 1000);
-    
-    // Handle call handoff from some incoming data connection
-    this.peer.events.on('nextPeer', (nextPeer: UpRadioPeerId) => {
-      this.connect(nextPeer);
-    });
   }
 
   public onModeChange(event: { mode: UpRadioMode }) {
@@ -113,6 +110,7 @@ export class App {
 
     if (!peerId) return;
 
+    const dataConnection: DataConnection = this.peer.connect(peerId);
     const connection: MediaConnection = this.peer.call(peerId, this.remoteStream.dialTone);
     connection.on('stream', (stream: MediaStream) => {
       this.events.emit('status::message', { text: 'Connected', level: 'success' });
@@ -187,6 +185,7 @@ export class AppService {
     app.channelEdit.hide();
     app.localStream.hide();
     app.remoteStream.show();
+    app.connect(app.connectComponent.input.value);
   }
   static initComponents(app: App): void {
     app.channelEdit = new ChannelEditComponent(app.broadcastSection, app.api, app.peer);
@@ -213,6 +212,25 @@ export class AppService {
     app.channelEdit.image = options.channelImage || null;
     app.mode = options.mode || UpRadioMode.LISTEN;
     app.localStream.setSelectedDeviceId(options.audioDeviceId);
+  }
+  static initEvents(app: App) {
+    // Handle call handoff from some incoming data connection
+    app.peer.events.on('nextPeer', (nextPeer: UpRadioPeerId) => {
+      app.connect(nextPeer);
+    });
+    // Handle receipt of channel info
+    app.peer.events.on('setChannelInfo', (channelInfos: UpRadioChannelInfo[]) => {
+      app.channelInfo.init(channelInfos[0]);
+    });
+
+    // Send channel info down to those who connect to us
+    if (app.mode === UpRadioMode.BROADCAST) {
+      app.peer.on('connection', (connection: DataConnection) => {
+        connection.on('open', () => {
+          UpRadioPeerRpcService.setChannelInfo(app.peer, connection, app.channelEdit.channelInfo.channelInfo);
+        });
+      });
+    }
   }
   static switchMode(app: App, newMode: UpRadioMode): void {
     switch (newMode) {
