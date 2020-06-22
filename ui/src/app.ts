@@ -8,7 +8,7 @@ import { ModeSwitchComponent, UpRadioMode } from './components/ModeSwitch/ModeSw
 import EventEmitter from 'eventemitter3';
 import { UpRadioStatusBar } from './components/Status';
 import { IUpRadioAppState } from './UpRadioState';
-import { ChannelEditComponent, UpRadioChannelStatus, UpRadioChannelId } from './components/Channel/ChannelEdit.component';
+import { ChannelEditComponent, UpRadioChannelStatus, UpRadioChannelId, UpRadioOnAirStatus } from './components/Channel/ChannelEdit.component';
 import { UpRadioApi, UpRadioChannelName } from './UpRadioApi';
 import { UpRadioApiError } from './UpRadioApi';
 import { ChannelInfo, UpRadioChannelInfo } from './components/Channel/ChannelInfo.component';
@@ -36,7 +36,7 @@ export class App {
   public remoteStream: RemoteStreamComponent;
   public connectComponent: ConnectComponent;
   public channelEdit: ChannelEditComponent;
-  public channelInfo: ChannelInfo;
+  public channelInfoComponent: ChannelInfo;
   public statusComponent: UpRadioStatusBar;
   public api: UpRadioApi;
   public heartbeat: NodeJS.Timeout;
@@ -57,8 +57,7 @@ export class App {
     
     AppService.initComponents(this);
     AppService.initOptions(this, options);
-    AppService.initEvents(this);
-    AppService.switchMode(this, this.mode);
+    AppService.switchMode(this, this.mode);    
 
     this.events.emit('status::message', { text: 'Creating session...', level: 'log' });
     
@@ -87,6 +86,20 @@ export class App {
     }, HEARTBEAT_INTERVAL_SECONDS * 1000);
   }
 
+  public get channelInfo(): UpRadioChannelInfo {
+    return this.mode === UpRadioMode.BROADCAST 
+      ? this.channelEdit.channelInfo.channelInfo
+      : this.channelInfoComponent.channelInfo;
+  }
+  
+  public get targetChannelId(): UpRadioChannelId {
+    return this.connectComponent.input.value;
+  }
+  
+  public set targetChannelId(cId: UpRadioChannelId) {
+    this.connectComponent.input.value = cId;
+  }
+
   public onModeChange(event: { mode: UpRadioMode }) {
     AppService.switchMode(this, event.mode);
   }
@@ -98,9 +111,8 @@ export class App {
     this.modeSwitch.value = mode;
   }
 
-  public async connect(channelId: UpRadioChannelId): Promise<void> {
+  public async call(channelId: UpRadioChannelId): Promise<void> {
     this.events.emit('status::message', { text: 'Connecting...', level: 'info' });
-    this.peer.status = UpRadioPeerState.RELAY;
     this.remoteStream.getDialTone();
     
     const peerId = await this.api.channelResolve(channelId)
@@ -110,7 +122,6 @@ export class App {
 
     if (!peerId) return;
 
-    const dataConnection: DataConnection = this.peer.connect(peerId);
     const connection: MediaConnection = this.peer.call(peerId, this.remoteStream.dialTone);
     connection.on('stream', (stream: MediaStream) => {
       this.events.emit('status::message', { text: 'Connected', level: 'success' });
@@ -130,11 +141,10 @@ export class App {
     });
   }
   
-  public async disconnect(): Promise<void> {
+  public async endCall(): Promise<void> {
     this.events.emit('status::message', { text: 'Disconnecting...', level: 'info' });
     UpRadioPeerService.closeMediaConnections(this.peer);
     await this.remoteStream.stop().catch(err => window.logger.error(err));
-    this.peer.status = UpRadioPeerState.OFF_AIR;
     this.events.emit('status::message', { text: 'Disconnected', level: 'info' });
     this.peer.off('call', (call: MediaConnection) => {
       UpRadioPeerService.initMediaConnection(this.peer, call);
@@ -146,18 +156,8 @@ export class App {
     this.events.emit('status::message', { text: 'Ending broadcast...', level: 'info' });
     UpRadioPeerService.closeMediaConnections(this.peer);
     await this.localStream.stop();
-    this.peer.status = UpRadioPeerState.OFF_AIR;
+    this.channelEdit.onAirStatus = UpRadioOnAirStatus.OFF_AIR;
     this.peer.off('call', (call: MediaConnection) => {
-      UpRadioPeerService.initMediaConnection(this.peer, call);
-      call.answer(this.localStream.stream);
-    });
-  }
-
-  public async broadcast(): Promise<void> {
-    this.events.emit('status::message', { text: 'Starting broadcast...', level: 'info' });
-    await this.localStream.start();
-    this.peer.status = UpRadioPeerState.ON_AIR;
-    this.peer.on('call', (call: MediaConnection) => {
       if (this.peer.maxConnectionsReached) {
         UpRadioPeerService.handoffConnection(this.peer, call);
         return;
@@ -166,26 +166,43 @@ export class App {
       call.answer(this.localStream.stream);
     });
   }
+
+  public async broadcast(): Promise<void> {
+    this.events.emit('status::message', { text: 'Starting broadcast...', level: 'info' });
+    await this.localStream.start();
+    this.channelEdit.onAirStatus = UpRadioOnAirStatus.ON_AIR;
+    this.peer.on('call', (call: MediaConnection) => {
+      if (this.peer.maxConnectionsReached) {
+        UpRadioPeerService.handoffConnection(this.peer, call);
+        return;
+      }
+      UpRadioPeerService.answerCall(this, call);
+    });
+  }
 }
 
 export class AppService {
   static engageBroadcastMode(app: App): void {
     UpRadioPeerService.closeMediaConnections(app.peer);
+    app.peer.status = UpRadioPeerState.BROADCAST;
     app.listenSection.classList.add('hidden');
     app.broadcastSection.classList.remove('hidden');
     app.channelEdit.show();
     app.localStream.show();
-    app.channelInfo.hide();
+    app.channelInfoComponent.hide();
     app.remoteStream.hide();
+    AppService.initBroadcastEvents(app);
   }
   static engageListenMode(app: App): void {
     UpRadioPeerService.closeMediaConnections(app.peer);
+    app.peer.status = UpRadioPeerState.RELAY;
     app.listenSection.classList.remove('hidden');
     app.broadcastSection.classList.add('hidden');
     app.channelEdit.hide();
     app.localStream.hide();
     app.remoteStream.show();
-    app.connect(app.connectComponent.input.value);
+    AppService.initRelayEvents(app);
+    app.call(app.targetChannelId);
   }
   static initComponents(app: App): void {
     app.channelEdit = new ChannelEditComponent(app.broadcastSection, app.api, app.peer);
@@ -193,44 +210,52 @@ export class AppService {
     app.statusComponent = new UpRadioStatusBar(app.statusSection, app.events);
     
     app.connectComponent = new ConnectComponent(app.nav);
-    app.channelInfo = new ChannelInfo(app.listenSection, 'UpRadioChannelInfo-Listen');
+    app.channelInfoComponent = new ChannelInfo(app.listenSection, 'UpRadioChannelInfo-Listen');
     app.modeSwitch = new ModeSwitchComponent(app.nav);
     app.modeSwitch.on('MODE_SWITCH', app.onModeChange.bind(app));
 
     app.remoteStream = new RemoteStreamComponent(app.streamSection);
-    app.remoteStream.playBtn.onclick = () => app.connect(app.connectComponent.input.value);
-    app.remoteStream.stopBtn.onclick = () => app.disconnect();
     
     app.localStream = new LocalStreamComponent(app.streamSection);
     app.localStream.broadcastBtn.onclick = app.broadcast.bind(app);
     app.localStream.stopBroadcastingBtn.onclick = app.stopBroadcast.bind(app);
   }
   static initOptions(app: App, options: IUpRadioAppState) {
-    app.connectComponent.input.value = options.targetChannelName || null;
+    app.targetChannelId = options.targetChannelName || null;
     app.channelEdit.name = options.channelName || null;
     app.channelEdit.description = options.channelDescription || null;
     app.channelEdit.image = options.channelImage || null;
     app.mode = options.mode || UpRadioMode.LISTEN;
     app.localStream.setSelectedDeviceId(options.audioDeviceId);
   }
-  static initEvents(app: App) {
+  static initBroadcastEvents(app: App) {
+    // Send channel info down to those who connect to us
+    app.peer.on('connection', (connection: DataConnection) => {
+      connection.on('open', () => {
+        UpRadioPeerRpcService.setChannelInfo(app.peer, connection, app.channelInfo);
+        UpRadioPeerRpcService.setChannelOnAirStatus(app.peer, connection, app.localStream.onAirStatus);
+      });
+    });
+  }
+  static initRelayEvents(app: App) {
     // Handle call handoff from some incoming data connection
     app.peer.events.on('nextPeer', (nextPeer: UpRadioPeerId) => {
-      app.connect(nextPeer);
+      app.call(nextPeer);
     });
     // Handle receipt of channel info
     app.peer.events.on('setChannelInfo', (channelInfos: UpRadioChannelInfo[]) => {
-      app.channelInfo.init(channelInfos[0]);
+      app.channelInfoComponent.init(channelInfos[0]);
+    });
+    // Handle receipt of channel status
+    app.peer.events.on('setChannelOnAirStatus', (status: UpRadioOnAirStatus[]) => {
+      app.remoteStream.onAirStatus = status[0];
     });
 
-    // Send channel info down to those who connect to us
-    if (app.mode === UpRadioMode.BROADCAST) {
-      app.peer.on('connection', (connection: DataConnection) => {
-        connection.on('open', () => {
-          UpRadioPeerRpcService.setChannelInfo(app.peer, connection, app.channelEdit.channelInfo.channelInfo);
-        });
-      });
-    }
+    app.peer.on('disconnected', async () => {
+      // close current connections and try again
+      await app.endCall();
+      app.call(app.targetChannelId);
+    });
   }
   static switchMode(app: App, newMode: UpRadioMode): void {
     switch (newMode) {

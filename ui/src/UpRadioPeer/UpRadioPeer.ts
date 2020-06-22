@@ -2,14 +2,14 @@ import Peer, { DataConnection, MediaConnection } from 'peerjs';
 import { v4 as uuid } from 'uuid';
 import EventEmitter from 'eventemitter3';
 import { UpRadioPeerRpcMsg, UpRadioPeerRpcService } from './UpRadioPeerRpc';
+import { App } from '@upradio-client/app';
 
 export const MAX_CONNECTIONS: number = Number(process.env.MAX_CONNECTIONS) || 1;
 
 export type UpRadioPeerId = string;
 
 export enum UpRadioPeerState {
-  OFF_AIR = 'OFF_AIR',
-  ON_AIR = 'ON_AIR',
+  BROADCAST = 'BROADCAST',
   RELAY = 'RELAY'
 }
 
@@ -40,13 +40,13 @@ export class UpRadioPeer implements IUpRadioPeer {
   
   constructor(id?: UpRadioPeerId, status?: UpRadioPeerState, debug: number = 3) {
     this.id = id || uuid();
-    this.status = status || UpRadioPeerState.OFF_AIR;
+    this.status = status || UpRadioPeerState.BROADCAST;
     this.peer = new Peer(this.id, {
       debug,
-      host: 'upradio.herokuapp.com',
+      host: process.env.PEER_SERVER,
       port: 443,
       secure: true,
-      path: '/peer-server',
+      path: process.env.PEER_PATH,
       key: process.env.PEER_KEY
     });
     this.dataConnections = new Map<string, DataConnection>();
@@ -98,7 +98,7 @@ export class UpRadioPeerService {
 
     peer.on('disconnected', () => {
       window.logger.log('Connection lost. Please reconnect');
-      // Workaround for peer.reconnect deleting previous idk
+      // Workaround for peer.reconnect deleting previous id
       peer.reconnect();
     });
 
@@ -156,18 +156,22 @@ export class UpRadioPeerService {
       let connection: MediaConnection = entry[1];
       connection.close();
     }
+    peer.mediaConnections.clear();
+    peer.dataConnections.clear();
   }
   static closeMediaConnections(peer: UpRadioPeer): void {
     for (let entry of peer.mediaConnections.entries()) {
       let connection: MediaConnection = entry[1];
       connection.close();
     }
+    peer.mediaConnections.clear();
   }
   static closeDataConnections(peer: UpRadioPeer): void {
     for (let entry of peer.dataConnections.entries()) {
       let connection: DataConnection = entry[1];
       connection.close();
     }
+    peer.dataConnections.clear();
   }
   static handoffConnection(peer: UpRadioPeer, call: MediaConnection): void {
     const nextPeer = Array.from(peer.mediaConnections.values()).pop();
@@ -185,5 +189,29 @@ export class UpRadioPeerService {
         if (UpRadioPeerRpcMsg.isAck(msg)) connection.close();
       });
     });
+  }
+  static answerCall(app: App, call: MediaConnection): void {
+    window.logger.debug('[UpRadioPeerService::answerCall] check existing connections');
+    if (app.peer.mediaConnections.has(call.peer)) {
+      const existingMediaConnection = app.peer.mediaConnections.get(call.peer);
+      existingMediaConnection && existingMediaConnection.close();
+      
+      const existingDataConnection = app.peer.dataConnections.get(call.peer);
+      existingDataConnection && existingMediaConnection.close();
+      
+      app.peer.mediaConnections.delete(call.peer);
+      app.peer.dataConnections.delete(call.peer);
+      window.logger.debug('[UpRadioPeerService::answerCall] removed existing connections');
+    }
+    UpRadioPeerService.initMediaConnection(app.peer, call);
+    const dataConnection = app.peer.connect(call.peer);
+    dataConnection.on('open', () => {
+      UpRadioPeerRpcService.setChannelInfo(app.peer, dataConnection, app.channelInfo);
+      UpRadioPeerRpcService.setChannelOnAirStatus(app.peer, dataConnection, app.localStream.onAirStatus);
+      window.logger.debug('[UpRadioPeerService::answerCall] sent channel info and status');
+    });
+    window.logger.debug('[UpRadioPeerService::answerCall] initialized new connections. Answering call.');
+    
+    call.answer(app.localStream.stream);
   }
 }

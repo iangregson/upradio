@@ -42,9 +42,14 @@ TODO
 - [X] Send channel info / status over RPC
 - [X] LISTEN: autoconnect
 - [X] LISTEN: channel info
-- [ ] LISTEN: better interation on play / pause controls
-- [ ] LISTEN: ON_AIR indicator + level meter
+- [X] LISTEN: better interaction on play / pause controls
+- [X] LISTEN: ON_AIR indicator + level meter
+- [X] Bug fix: first entry of channel name doesn't take (need an onchange handler)
+- [ ] [BUG][LISTEN] Can't connect in mobile browser
+- [ ] [BUG][BROADCAST] Starting broadcast before channel verify doesn't work?
+- [ ] [BUG][LISTEN] Refresh to reconnect doesn't work properly
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
+- [ ] Demo videos
 - [ ] Add listener count widget
 - [ ] Make ready for open source: github org, license and contributor files, remove keys, etc
 

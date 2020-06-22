@@ -47,6 +47,8 @@ module.exports = {
     new htmlPlugin({ filename: 'index.html', template: './index.html' }),
     new MiniCssExtractPlugin({ filename: 'main.css' }),
     new webpack.DefinePlugin({
+      'process.env.PEER_SERVER': JSON.stringify(dotenv.parsed.PEER_SERVER),
+      'process.env.PEER_PATH': JSON.stringify(dotenv.parsed.PEER_PATH),
       'process.env.PEER_KEY': JSON.stringify(dotenv.parsed.PEER_KEY),
       'process.env.MAX_CONNECTIONS': JSON.stringify(dotenv.parsed.MAX_CONNECTIONS)
     }),

@@ -12,12 +12,18 @@ export enum UpRadioChannelStatus {
   invalid = 'INVALID'
 }
 
+export enum UpRadioOnAirStatus {
+  ON_AIR = 'ON_AIR',
+  OFF_AIR = 'OFF_AIR'
+}
+
 export class ChannelEditComponent extends Component {
   public parent: HTMLElement;
   public api: UpRadioApi;
   public peer: UpRadioPeer;
   public channelInfo: ChannelInfo;
 
+  private _onAirStatus: UpRadioOnAirStatus = UpRadioOnAirStatus.OFF_AIR;
   private _status: UpRadioChannelStatus;
   private nameInput: HTMLInputElement;
   private descriptionInput: HTMLTextAreaElement;
@@ -40,6 +46,9 @@ export class ChannelEditComponent extends Component {
     this.container.classList.add('flex-grow');
     
     this.nameInput = this.container.querySelector('input#channelName');
+    this.nameInput.onchange = () => {
+      this.name = this.nameInput.value;
+    }
     this.descriptionInput = this.container.querySelector('textarea#channelDescription');
     
     this.verifyBtn = this.container.querySelector('button#channelVerify');
@@ -97,6 +106,13 @@ export class ChannelEditComponent extends Component {
       .catch((err: UpRadioApiError) => {
         this.channelStatus = UpRadioChannelStatus.invalid;
       });
+  }
+
+  get onAirStatus(): UpRadioOnAirStatus {
+    return this._onAirStatus;
+  }
+  set onAirStatus(status: UpRadioOnAirStatus) {
+    this._onAirStatus = status;
   }
 
   get channelStatus(): UpRadioChannelStatus {

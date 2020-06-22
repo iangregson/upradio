@@ -1,6 +1,7 @@
 import template from './LocalStream.component.html';
 import { Component } from "..";
 import { LevelMeter, FreqMeter } from '../LevelMeter';
+import { UpRadioOnAirStatus } from '../Channel/ChannelEdit.component';
 
 export interface IUpRadioStream {
   stream: MediaStream;
@@ -16,6 +17,7 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
   public stopBroadcastingBtn: HTMLButtonElement;
   private statusPanel: HTMLDivElement;
   private broadcastStatusText: HTMLSpanElement;
+  private broadcastStatus = UpRadioOnAirStatus.OFF_AIR;
 
   public stream: MediaStream;
 
@@ -55,17 +57,34 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
     }
   }
 
+  public get onAirStatus(): UpRadioOnAirStatus {
+    return this.broadcastStatus;
+  }
+  public set onAirStatus(status: UpRadioOnAirStatus) {
+    this.broadcastStatus = status;
+    switch (status) {
+      case UpRadioOnAirStatus.ON_AIR:
+        this.broadcastStatusText.classList.remove('text-red-500');
+        this.broadcastStatusText.classList.add('text-green-500');
+        this.broadcastStatusText.innerText = 'ON AIR';
+        break;
+      case UpRadioOnAirStatus.OFF_AIR:
+        this.broadcastStatusText.classList.add('text-red-500');
+        this.broadcastStatusText.classList.remove('text-green-500');
+        this.broadcastStatusText.innerText = 'OFF AIR';
+        break;
+    }
+  }
+
   public async stop(): Promise<void> {
     if (!this.stream) return;
     this.stream.getTracks().forEach(track => {
       track.stop();
     });
     this.freqMeter.stop();
-    this.stopBroadcastingBtn.classList.toggle('hidden');
-    this.broadcastBtn.classList.toggle('hidden');
-    this.broadcastStatusText.classList.toggle('text-red-500');
-    this.broadcastStatusText.classList.toggle('text-green-500');
-    this.broadcastStatusText.innerText = 'OFF AIR';
+    this.stopBroadcastingBtn.classList.add('hidden');
+    this.broadcastBtn.classList.remove('hidden');
+    this.onAirStatus = UpRadioOnAirStatus.OFF_AIR;
   }
 
   public get selectedDevice(): MediaDeviceInfo | undefined {
@@ -82,11 +101,9 @@ export class LocalStreamComponent extends Component implements IUpRadioStream {
 
     this.stream = await UpRadioStreamService.getAudioStream(this.selectedDevice);
     this.freqMeter.init(this.stream);
-    this.broadcastStatusText.classList.toggle('text-red-500');
-    this.broadcastStatusText.classList.toggle('text-green-500');
-    this.broadcastStatusText.innerText = 'ON AIR';
-    this.stopBroadcastingBtn.classList.toggle('hidden');
-    this.broadcastBtn.classList.toggle('hidden');
+    this.stopBroadcastingBtn.classList.remove('hidden');
+    this.broadcastBtn.classList.add('hidden');
+    this.onAirStatus = UpRadioOnAirStatus.ON_AIR;
     
     // In-case of proper labels becoming available
     this.initDeviceList();
