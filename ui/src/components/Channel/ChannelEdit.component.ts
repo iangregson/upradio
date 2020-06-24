@@ -95,7 +95,15 @@ export class ChannelEditComponent extends Component {
     const url = new URL(location.origin);
     url.pathname = '/' + this.channelId;
     await navigator.clipboard.writeText(url.toString())
-      .catch(err => window.logger.error(err));
+      .catch(err => {
+        this.verifyBtn.classList.add('border-red-500');
+        window.logger.error(err)
+      });
+    this.verifyBtn.classList.add('border-green-500');
+    setTimeout(() => {
+      this.verifyBtn.classList.remove('border-green-500');
+      this.verifyBtn.classList.remove('border-red-500');
+    }, 3000);
   }
 
   public async verifyChannelName() {

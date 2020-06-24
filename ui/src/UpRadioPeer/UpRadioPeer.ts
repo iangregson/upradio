@@ -191,7 +191,7 @@ export class UpRadioPeerService {
     });
   }
   static answerCall(app: App, call: MediaConnection): void {
-    window.logger.debug('[UpRadioPeerService::answerCall] check existing connections');
+    window.logger.debug('[UpRadioPeerService::answerCall] check existing connections', call);
     if (app.peer.mediaConnections.has(call.peer)) {
       const existingMediaConnection = app.peer.mediaConnections.get(call.peer);
       existingMediaConnection && existingMediaConnection.close();

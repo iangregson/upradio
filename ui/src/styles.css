@@ -38,6 +38,14 @@ button.btn {
   @apply px-2;
   @apply border;
   @apply rounded;
+  @apply transition-colors;
+  @apply duration-150;
+  @apply ease-in-out;
+}
+
+button:disabled {
+  @apply opacity-50;
+  cursor: not-allowed;
 }
 
 input:focus, textarea:focus {
@@ -78,6 +86,11 @@ svg.link-icon {
   @apply inline;
   @apply fill-current;
   @apply text-white;
+}
+
+.audio-controls-icon:disabled {
+  @apply opacity-50;
+  cursor: not-allowed;
 }
 
 .main-mode-icon {

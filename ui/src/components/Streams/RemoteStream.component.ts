@@ -6,6 +6,7 @@ import { UpRadioOnAirStatus } from '../Channel/ChannelEdit.component';
 
 export class RemoteStreamComponent extends Component implements IUpRadioStream {
   public audioOutput: HTMLAudioElement;
+  public connectBtn: HTMLButtonElement;
   public playBtn: HTMLButtonElement;
   public stopBtn: HTMLButtonElement;
 
@@ -22,7 +23,9 @@ export class RemoteStreamComponent extends Component implements IUpRadioStream {
     super(container, 'RemoteStream', template);
 
     this.audioOutput = container.querySelector('audio#UpRadioAudioOutput');
+    this.connectBtn = container.querySelector('button#UpRadioAudioOutput-connect');
     this.playBtn = container.querySelector('button#UpRadioAudioOutput-play');
+    this.playBtn.disabled = true;
     this.stopBtn = container.querySelector('button#UpRadioAudioOutput-stop');
     this.hideBtn(this.stopBtn);
 
@@ -58,11 +61,13 @@ export class RemoteStreamComponent extends Component implements IUpRadioStream {
       case UpRadioOnAirStatus.ON_AIR:
         this.statusText.classList.remove('text-red-500');
         this.statusText.classList.add('text-green-500');
+        this.connectBtn.querySelector('svg').classList.add('text-green-500');
         this.statusText.innerText = 'ON AIR';
         break;
       case UpRadioOnAirStatus.OFF_AIR:
         this.statusText.classList.add('text-red-500');
         this.statusText.classList.remove('text-green-500');
+        this.connectBtn.querySelector('svg').classList.remove('text-green-500');
         this.statusText.innerText = 'OFF AIR';
         break;
     }

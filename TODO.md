@@ -45,9 +45,15 @@ TODO
 - [X] LISTEN: better interaction on play / pause controls
 - [X] LISTEN: ON_AIR indicator + level meter
 - [X] Bug fix: first entry of channel name doesn't take (need an onchange handler)
-- [ ] [BUG][LISTEN] Can't connect in mobile browser
+- [X] [BUG][LISTEN] Can't connect in mobile browser
+- [X] [BUG][LISTEN] Refresh to reconnect doesn't work properly
+- [X] [BUG] Duplicate login and resolve calls
+- [X] Success indication on "Copy URL" button
+- [X] Disabled styles on buttons
 - [ ] [BUG][BROADCAST] Starting broadcast before channel verify doesn't work?
-- [ ] [BUG][LISTEN] Refresh to reconnect doesn't work properly
+- [ ] [BUG] Not keeping same session token between requests
+- [ ] [LISTEN] When we get disconnected, hide the pause button (and show the disabled play button)
+- [ ] Add chat URL
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
 - [ ] Demo videos
 - [ ] Add listener count widget

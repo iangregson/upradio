@@ -123,15 +123,20 @@ export class App {
     if (!peerId) return;
 
     const connection: MediaConnection = this.peer.call(peerId, this.remoteStream.dialTone);
+    this.events.emit('status::message', { text: 'Connected. Awaiting stream...', level: 'info' });
+    this.remoteStream.playBtn.disabled = true;
     connection.on('stream', (stream: MediaStream) => {
       this.events.emit('status::message', { text: 'Connected', level: 'success' });
+      window.logger.debug(`[app#call][connection.on('stream')]`);
       this.remoteStream.start(stream);
+      this.remoteStream.playBtn.disabled = false;
     });
     connection.on('close', () => {
       this.events.emit('status::message', { text: 'Broadcast stopped', level: 'info' });
       this.remoteStream.stop();
+      this.remoteStream.onAirStatus = UpRadioOnAirStatus.OFF_AIR;
     })
-    this.peer.on('call', (call: MediaConnection) => {
+    this.peer.on('call', (call: MediaConnection) => {      
       if (this.peer.maxConnectionsReached) {
         UpRadioPeerService.handoffConnection(this.peer, call);
         return;
@@ -172,6 +177,7 @@ export class App {
     await this.localStream.start();
     this.channelEdit.onAirStatus = UpRadioOnAirStatus.ON_AIR;
     this.peer.on('call', (call: MediaConnection) => {
+      window.logger.debug(`[app]on('call')`, call);
       if (this.peer.maxConnectionsReached) {
         UpRadioPeerService.handoffConnection(this.peer, call);
         return;
@@ -202,7 +208,6 @@ export class AppService {
     app.localStream.hide();
     app.remoteStream.show();
     AppService.initRelayEvents(app);
-    app.call(app.targetChannelId);
   }
   static initComponents(app: App): void {
     app.channelEdit = new ChannelEditComponent(app.broadcastSection, app.api, app.peer);
@@ -215,6 +220,9 @@ export class AppService {
     app.modeSwitch.on('MODE_SWITCH', app.onModeChange.bind(app));
 
     app.remoteStream = new RemoteStreamComponent(app.streamSection);
+    app.remoteStream.connectBtn.onclick = () => {
+      app.call(app.targetChannelId);
+    };
     
     app.localStream = new LocalStreamComponent(app.streamSection);
     app.localStream.broadcastBtn.onclick = app.broadcast.bind(app);
@@ -252,9 +260,8 @@ export class AppService {
     });
 
     app.peer.on('disconnected', async () => {
-      // close current connections and try again
+      // close current connections
       await app.endCall();
-      app.call(app.targetChannelId);
     });
   }
   static switchMode(app: App, newMode: UpRadioMode): void {
