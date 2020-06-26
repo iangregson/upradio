@@ -14,6 +14,7 @@ export interface IUpRadioAppState {
   mode?: UpRadioMode;
   audioDeviceId?: string;
   channelName?: UpRadioChannelName;
+  chatUrl?: string;
   targetChannelName?: UpRadioChannelName;
   channelDescription?: string;
   sessionToken?: UpRadioApiSessionToken;
@@ -99,6 +100,23 @@ export class UpRadioAppState implements IUpRadioAppState {
     try {
       const w = <UpRadioAppWindow>this.w;
       w.app.channelEdit.name = name;
+    } catch (_) { }
+  }
+
+  public get chatUrl(): string {
+    let url: string;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      url = w.app.channelEdit.chatUrl;
+    } catch (_) { }
+
+    return url || this._.chatUrl;
+  }
+  public set chatUrl(url: string) {
+    this._.chatUrl = url;
+    try {
+      const w = <UpRadioAppWindow>this.w;
+      w.app.channelEdit.chatUrl = url;
     } catch (_) { }
   }
 
@@ -228,7 +246,8 @@ export class UpRadioAppState implements IUpRadioAppState {
       targetChannelName: this.targetChannelName,
       channelDescription: this.channelDescription,
       channelImage: this.channelImage,
-      sessionToken: this.sessionToken
+      sessionToken: this.sessionToken,
+      chatUrl: this.chatUrl
     };
   }
   udpate() {
@@ -237,7 +256,8 @@ export class UpRadioAppState implements IUpRadioAppState {
     const localStore = {
       channelName: props.channelName,
       channelDescription: props.channelDescription,
-      channelImage: props.channelImage
+      channelImage: props.channelImage,
+      chatUrl: props.chatUrl
     };
     const sessionStore = {
       peerId: props.peerId,
@@ -272,6 +292,7 @@ export class UpRadioAppState implements IUpRadioAppState {
     this._.mode = savedSession.mode || null;
     this._.audioDeviceId = savedSession.audioDeviceId || null;
     this._.channelName = savedLocal.channelName || null;
+    this._.chatUrl = savedLocal.chatUrl || null;
     this._.targetChannelName = savedSession.targetChannelName || null;
     this._.channelDescription = savedLocal.channelDescription || null;
     this._.channelImage = savedLocal.channelImage || null;

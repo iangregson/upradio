@@ -50,10 +50,12 @@ TODO
 - [X] [BUG] Duplicate login and resolve calls
 - [X] Success indication on "Copy URL" button
 - [X] Disabled styles on buttons
-- [ ] [BUG][BROADCAST] Starting broadcast before channel verify doesn't work?
-- [ ] [BUG] Not keeping same session token between requests
-- [ ] [LISTEN] When we get disconnected, hide the pause button (and show the disabled play button)
-- [ ] Add chat URL
+- [X] [BUG] Not keeping same session token between requests
+- [X] [LISTEN] When we get disconnected, hide the pause button (and show the disabled play button)
+- [X] Add chat URL
+- [X] Don't set the chat URL if it's null
+- [X] Button outlines
+- [X] Improve header menu area
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
 - [ ] Demo videos
 - [ ] Add listener count widget

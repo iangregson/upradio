@@ -26,6 +26,7 @@ export class ChannelEditComponent extends Component {
   private _onAirStatus: UpRadioOnAirStatus = UpRadioOnAirStatus.OFF_AIR;
   private _status: UpRadioChannelStatus;
   private nameInput: HTMLInputElement;
+  private chatInput: HTMLInputElement;
   private descriptionInput: HTMLTextAreaElement;
   private verifyBtn: HTMLButtonElement;
   private copyUrlBtn: HTMLButtonElement;
@@ -50,6 +51,7 @@ export class ChannelEditComponent extends Component {
       this.name = this.nameInput.value;
     }
     this.descriptionInput = this.container.querySelector('textarea#channelDescription');
+    this.chatInput = this.container.querySelector('input#channelChat');
     
     this.verifyBtn = this.container.querySelector('button#channelVerify');
     this.verifyBtn.onclick = this.verifyChannelName.bind(this);
@@ -96,13 +98,13 @@ export class ChannelEditComponent extends Component {
     url.pathname = '/' + this.channelId;
     await navigator.clipboard.writeText(url.toString())
       .catch(err => {
-        this.verifyBtn.classList.add('border-red-500');
+        this.copyUrlBtn.classList.add('border-red-500');
         window.logger.error(err)
       });
-    this.verifyBtn.classList.add('border-green-500');
+    this.copyUrlBtn.classList.add('border-green-500');
     setTimeout(() => {
-      this.verifyBtn.classList.remove('border-green-500');
-      this.verifyBtn.classList.remove('border-red-500');
+      this.copyUrlBtn.classList.remove('border-green-500');
+      this.copyUrlBtn.classList.remove('border-red-500');
     }, 3000);
   }
 
@@ -142,6 +144,15 @@ export class ChannelEditComponent extends Component {
     }
   }
 
+  get chatUrl(): string {
+    return encodeURI(this.chatInput.value);
+  }
+  set chatUrl(chatUrl: string) {
+    if (!chatUrl || !chatUrl.length) return;
+    this.chatInput.value = encodeURI(chatUrl);
+    this.channelInfo.chatUrl = encodeURI(chatUrl);
+  }
+  
   get name(): UpRadioChannelName {
     return this.nameInput.value;
   }

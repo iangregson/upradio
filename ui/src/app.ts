@@ -231,6 +231,7 @@ export class AppService {
   static initOptions(app: App, options: IUpRadioAppState) {
     app.targetChannelId = options.targetChannelName || null;
     app.channelEdit.name = options.channelName || null;
+    app.channelEdit.chatUrl = options.chatUrl || null;
     app.channelEdit.description = options.channelDescription || null;
     app.channelEdit.image = options.channelImage || null;
     app.mode = options.mode || UpRadioMode.LISTEN;

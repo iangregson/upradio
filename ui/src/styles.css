@@ -10,6 +10,11 @@ body {
   @apply bg-black;
 }
 
+svg {
+  @apply fill-current;
+  @apply text-white;
+}
+
 nav, div#helpText {
   @apply bg-white;
   @apply p-6;
@@ -32,6 +37,10 @@ textarea {
   resize: none;
 }
 
+button {
+  @apply border-transparent;
+}
+
 button.btn {
   @apply text-center;
   @apply mx-2;
@@ -39,7 +48,18 @@ button.btn {
   @apply border;
   @apply rounded;
   @apply transition-colors;
-  @apply duration-150;
+  @apply duration-300;
+  @apply ease-in-out;
+}
+
+button.audio-controls-btn {
+  @apply text-center;
+  @apply mx-2;
+  @apply p-2;
+  @apply border;
+  @apply rounded;
+  @apply transition-colors;
+  @apply duration-300;
   @apply ease-in-out;
 }
 
@@ -76,16 +96,12 @@ svg.link-icon {
   @apply h-6;
   @apply w-6;
   @apply inline;
-  @apply fill-current;
-  @apply text-white;
 }
 
 .audio-controls-icon {
   @apply h-16;
   @apply w-16;
   @apply inline;
-  @apply fill-current;
-  @apply text-white;
 }
 
 .audio-controls-icon:disabled {
@@ -97,15 +113,12 @@ svg.link-icon {
   @apply h-48;
   @apply m-auto;
   @apply opacity-75;
-  @apply fill-current;
-  @apply text-white;
 }
 
 .status-icon {
   @apply inline;
   @apply align-text-bottom;
   @apply h-4;
-  @apply fill-current;
 }
 
 .upradio-select {

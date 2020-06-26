@@ -61,13 +61,16 @@ export class RemoteStreamComponent extends Component implements IUpRadioStream {
       case UpRadioOnAirStatus.ON_AIR:
         this.statusText.classList.remove('text-red-500');
         this.statusText.classList.add('text-green-500');
-        this.connectBtn.querySelector('svg').classList.add('text-green-500');
+        this.connectBtn.classList.add('border-green-500');
         this.statusText.innerText = 'ON AIR';
         break;
       case UpRadioOnAirStatus.OFF_AIR:
         this.statusText.classList.add('text-red-500');
         this.statusText.classList.remove('text-green-500');
-        this.connectBtn.querySelector('svg').classList.remove('text-green-500');
+        this.connectBtn.classList.remove('border-green-500');
+        this.hideBtn(this.stopBtn);
+        this.playBtn.disabled = true;
+        this.showBtn(this.playBtn);
         this.statusText.innerText = 'OFF AIR';
         break;
     }

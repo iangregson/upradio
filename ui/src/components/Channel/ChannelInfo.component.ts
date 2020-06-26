@@ -19,6 +19,7 @@ export interface UpRadioChannelInfo {
   description?: string;
   image?: string; // base64 iamge string
   avatar?: string; // base64 iamge string
+  chatUrl?: string; // URL to the channel's chat room
 }
 
 export class ChannelInfo extends Component {
@@ -31,7 +32,8 @@ export class ChannelInfo extends Component {
   descriptionP: HTMLParagraphElement;
   nameH1: HTMLHeadingElement;
   infoBtn: HTMLButtonElement;
-  editBtn: HTMLButtonElement;  
+  editBtn: HTMLButtonElement;
+  chatBtn: HTMLAnchorElement;
   _mode = ChannelInfoMode.READ;
 
   constructor(parent: HTMLElement, componentId = 'UpRadioChannelInfo') {
@@ -53,6 +55,7 @@ export class ChannelInfo extends Component {
     this.infoBtn = this.nameBox.querySelector('button#expandInfoBtn');
     this.infoBtn.onclick = () => this.descriptionBox.classList.toggle('hidden');
     this.editBtn = this.nameBox.querySelector('button#editInfoBtn');
+    this.chatBtn = this.nameBox.querySelector('a#chatBtn');
   }
   public init(channelInfo: UpRadioChannelInfo) {
     channelInfo.name && (this.name = channelInfo.name);
@@ -61,6 +64,7 @@ export class ChannelInfo extends Component {
     channelInfo.peerId && this.makeAvatar();
     channelInfo.image && (this.image = channelInfo.image);
     channelInfo.description && (this.description = channelInfo.description);
+    channelInfo.chatUrl && (this.chatUrl = channelInfo.chatUrl);
   }
 
   public toJSON(): UpRadioChannelInfo {
@@ -111,6 +115,16 @@ export class ChannelInfo extends Component {
 
   public get name(): UpRadioChannelName {
     return this.channelInfo.name;
+  }
+
+  public set chatUrl(url: string) {
+    this.channelInfo.chatUrl = url;
+    this.chatBtn.href = url;
+    this.mode === ChannelInfoMode.READ && this.chatBtn.classList.remove('hidden');
+  }
+
+  public get chatUrl(): string {
+    return this.channelInfo.chatUrl;
   }
 
   public set channelId(id: UpRadioChannelId) {

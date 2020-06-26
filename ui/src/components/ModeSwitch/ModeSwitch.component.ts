@@ -9,6 +9,7 @@ export enum UpRadioMode {
 export class ModeSwitchComponent extends Component {
   public broadcastInput: HTMLInputElement;
   public listenInput: HTMLInputElement;
+  public broadcastBtnBox: HTMLDivElement;
   public broadcastBtn: HTMLButtonElement;
 
   constructor(container: HTMLElement) {
@@ -24,6 +25,7 @@ export class ModeSwitchComponent extends Component {
       this.emit('MODE_SWITCH', { mode: this.value });
     }
 
+    this.broadcastBtnBox = container.querySelector('div#UpRadioModeSwitch-Btn');
     this.broadcastBtn = container.querySelector('button#UpRadioModeSwitchBtn-Broadcast');
     this.broadcastBtn.onclick = () => (location.href = location.origin);
   }
@@ -37,7 +39,9 @@ export class ModeSwitchComponent extends Component {
   set value(mode: UpRadioMode) {
     this.broadcastInput.checked = mode === UpRadioMode.BROADCAST;
     this.listenInput.checked = mode === UpRadioMode.LISTEN;
-    this.broadcastBtn.style.display = mode === UpRadioMode.LISTEN ? 'unset' : 'none';
+    if (mode === UpRadioMode.BROADCAST) {
+      this.broadcastBtnBox.classList.add('hidden');
+    }
     this.emit('MODE_SWITCH', { mode });
   }
 

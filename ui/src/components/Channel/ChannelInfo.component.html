@@ -4,7 +4,12 @@
 <div id="channelImage" class="flex-1 hidden rounded-lg w-full max-h-full bg-local bg-center bg-cover bg-no-repeat"></div>
 <div id="channelName" class="hidden flex-initial flex flex-row items-center">
   <h1 class="flex-1 text-3xl"></h1>
-  <div id="expandInfoIcon" class="flex-initial">
+  <div id="chatIcon" class="flex-initial mx-1">
+    <a id="chatBtn" class="align-middle hidden" aria-label="Visit the channel's chat room" title="Visit the channel's chat room" href="" target="_blank">
+      <svg class="h-6 fill-current text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 15l-4 4v-4H2a2 2 0 0 1-2-2V3c0-1.1.9-2 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-8zM5 7v2h2V7H5zm4 0v2h2V7H9zm4 0v2h2V7h-2z"/></svg>
+    </a>
+  </div>
+  <div id="expandInfoIcon" class="flex-initial mx-1">
     <button id="expandInfoBtn" type="button" class="align-middle hidden" aria-label="View the channel description" title="View the channel description">
       <svg class="h-6 fill-current text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M4 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm6 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm6 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
     </button>
