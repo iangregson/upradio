@@ -1,8 +1,12 @@
-all: build deploy
+all: install build deploy
 .PHONY: all
 
 clean:
 	rm -rf dist/
+
+install:
+	npm --prefix ./ui install
+	npm --prefix ./workers-site install
 
 build:
 	npm --prefix ./ui run build

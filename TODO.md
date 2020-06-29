@@ -1,6 +1,8 @@
 TODO
 ----
 
+### v0.1.0
+
 - [X] Reinstate state manager support; load peer ID / state from session storage
 - [X] Get it working on iangregson.workers.dev
 - [X] Add a waveform visulizer
@@ -56,11 +58,11 @@ TODO
 - [X] Don't set the chat URL if it's null
 - [X] Button outlines
 - [X] Improve header menu area
-- [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
+- [X] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
+- [X] Make ready for open source: github prep, license and contributor files, remove keys, etc
 - [ ] Demo videos
-- [ ] Make ready for open source: github org, license and contributor files, remove keys, etc
 
-### Phase 2
+### ### v1.0.0
 
 - [ ] Add recorder feature
 - [ ] Add listener count widget
