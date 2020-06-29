@@ -6,6 +6,10 @@ This project is very much in its infancy, so there's not much in the way of guid
 
 Check the project [Issues](https://github.com/iangregson/upradio/issues) and [Kanban](https://github.com/iangregson/upradio/projects/1) and pick something to work on. Say hello in the [matrix chat](https://matrix.to/#/!tabwwSGkCTKBdIJgVw:matrix.org?via=matrix.org) and talk about what you're working on.
 
+### Security vulnerabilities
+
+If you find a vulnerability please email ian at gregson dot me and don't file an issue right away.
+
 ### Bugs
 
 File bugs in the [Issues](https://github.com/iangregson/upradio/issues) area. Include the following information:
