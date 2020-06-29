@@ -58,11 +58,12 @@ TODO
 - [X] Improve header menu area
 - [ ] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
 - [ ] Demo videos
-- [ ] Add listener count widget
 - [ ] Make ready for open source: github org, license and contributor files, remove keys, etc
 
 ### Phase 2
 
+- [ ] Add recorder feature
+- [ ] Add listener count widget
 - [ ] Play file component with level control
 - [ ] Audio output chooser
 - [ ] Lobby
