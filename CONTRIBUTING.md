@@ -4,7 +4,7 @@ This project is very much in its infancy, so there's not much in the way of guid
 
 ### How to get started
 
-Check the project [Issues](https://github.com/iangregson/upradio/issues) and [Kanban](https://github.com/iangregson/upradio/projects/1) and pick something to work on. Say hello in the [matrix chat](https://matrix.to/#/!tabwwSGkCTKBdIJgVw:matrix.org?via=matrix.org) and talk about what you're working on.
+Check the project [Issues](https://github.com/iangregson/upradio/issues) and [Kanban](https://github.com/users/iangregson/projects/1) and pick something to work on. Say hello in the [matrix chat](https://matrix.to/#/!tabwwSGkCTKBdIJgVw:matrix.org?via=matrix.org) and talk about what you're working on.
 
 ### Security vulnerabilities
 
