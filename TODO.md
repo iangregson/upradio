@@ -60,7 +60,8 @@ TODO
 - [X] Improve header menu area
 - [X] FAQ, Help, About, OSS, Privacy notice, Contact Form, etc
 - [X] Make ready for open source: github prep, license and contributor files, remove keys, etc
-- [ ] Demo videos
+- [ ] Demo videos into the FAQ doc
+- [ ] Fix PWA icons to have white, not transparent, backgrounds
 
 ### ### v1.0.0
 
