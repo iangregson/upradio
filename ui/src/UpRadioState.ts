@@ -3,6 +3,19 @@ import { UpRadioPeerId, UpRadioPeerState } from './UpRadioPeer';
 import { UpRadioMode } from './components/ModeSwitch/ModeSwitch.component';
 import { UpRadioChannelName, UpRadioChannelId } from './components/Channel/ChannelEdit.component';
 import { UpRadioApiSessionToken } from './UpRadioApi';
+import { set, get, del } from 'idb-keyval';
+
+export class Idb {
+  static async get(key: string): Promise<string> {
+    return get(key);
+  }
+  static async set(key: string, value: string): Promise<void> {
+    await set(key, value);
+  }
+  static async del(key: string): Promise<void> {
+    await del(key);
+  }
+}
 
 interface UpRadioAppWindow extends Window {
   app: App;
@@ -28,9 +41,13 @@ export class UpRadioAppState implements IUpRadioAppState {
   private _: IUpRadioAppState;
   public namespace = 'UpRadioAppState';
 
-  constructor(w: Window = window) {
-    this.w = w;
-    this._ = this.reload();
+  constructor(savedState?: IUpRadioAppState) {
+    this.w = window;
+    if (savedState) {
+      this._ = savedState;
+    } else {
+      this._ = this.reload();
+    }
   }
   
   public init(app: App): this {
@@ -269,6 +286,7 @@ export class UpRadioAppState implements IUpRadioAppState {
     };
     w.localStorage.setItem(this.namespace, JSON.stringify(localStore));
     w.sessionStorage.setItem(this.namespace, JSON.stringify(sessionStore));
+    Idb.set('UpRadio::savedState', JSON.stringify(this));
     this.setTitle();
   }
   reload(): IUpRadioAppState {

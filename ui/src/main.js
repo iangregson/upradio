@@ -1,13 +1,18 @@
 const { App } = require('./app.ts');
-const { UpRadioAppState } = require('./UpRadioState.ts');
+const { UpRadioAppState, Idb } = require('./UpRadioState.ts');
 
 main().catch(console.error);
 
 async function main() {
+  let savedState = await Idb.get('UpRadio::savedState');
+  if (savedState) {
+    savedState = JSON.parse(savedState);
+  }
+
   const root = document.getElementById('root');
   const channelName = getChannelName();
   
-  const StateManager = new UpRadioAppState();
+  const StateManager = new UpRadioAppState(savedState);
   if (channelName) {
     StateManager.mode = 'LISTEN';
     StateManager.targetChannelName = channelName;
