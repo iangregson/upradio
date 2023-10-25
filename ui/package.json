@@ -42,7 +42,7 @@
     "last 1 Firefox versions"
   ],
   "dependencies": {
-    "crypto-js": "^4.0.0",
+    "crypto-js": "^4.2.0",
     "eventemitter3": "^4.0.4",
     "idb-keyval": "^3.2.0",
     "identicon.js": "^2.3.3",
