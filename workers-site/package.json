@@ -8,7 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "@cloudflare/kv-asset-handler": "0.0.5",
-    "crypto-js": "^4.0.0"
+    "crypto-js": "^4.2.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^1.0.9",
